@@ -10,6 +10,7 @@
             --text-main: #333;
             --border-color: #ddd;
             
+            /* Colores de áreas - Puedes ajustarlos según tu manual de marca */
             --area-logistica: #cf1a2c;
             --area-marketing: #00a499;
             --area-smb: #8b572a;
@@ -49,9 +50,20 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transition: all 0.2s ease;
         }
+
+        /* Efecto al pasar el mouse por encima (expande un poco para leer si está cortado) */
+        .project-bar:hover {
+            filter: brightness(1.1);
+            z-index: 100;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: default;
+        }
+
         .badges { display: flex; gap: 5px; align-items: center; }
-        .badge { padding: 2px 6px; border-radius: 10px; font-size: 10px; background: rgba(255,255,255,0.2); }
+        .badge { padding: 2px 6px; border-radius: 10px; font-size: 10px; background: rgba(255,255,255,0.3); }
         .status-badge { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 2px solid white;}
         
         .today-line { position: absolute; top: 0; bottom: -500px; width: 2px; background-color: #ff3b30; z-index: 10; }
@@ -101,16 +113,13 @@
     </div>
 
     <script>
-        // ====================================================================
-        // ⚠️ PEGA TU URL DE APPS SCRIPT AQUÍ (La que termina en /exec)
-        // ====================================================================
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
         const windowStart = new Date('2026-01-01T00:00:00');
         const windowEnd = new Date('2026-06-30T23:59:59');
         const totalDays = (windowEnd - windowStart) / (1000 * 60 * 60 * 24);
 
-        let currentTab = 'automation ia'; // Internamente lo manejamos en minúsculas
+        let currentTab = 'automation ia'; 
         let data = []; 
 
         function normalizeText(text) {
@@ -120,7 +129,6 @@
 
         function getTimelinePosition(dateValue) {
             if (!dateValue) return null;
-            // Limpia la fecha por si llega con formatos raros de zona horaria
             let cleanDate = dateValue.toString().split('T')[0];
             const date = new Date(cleanDate + 'T00:00:00'); 
             const daysFromStart = (date - windowStart) / (1000 * 60 * 60 * 24);
@@ -146,40 +154,29 @@
             const qFilter = document.getElementById('q-filter').value;
             container.innerHTML = ''; 
 
-            if (!data || data.length === 0) {
-                container.innerHTML = '<div class="debug-msg">La hoja de Google conectó bien, pero se leyó completamente vacía. Revisa que estés leyendo la pestaña correcta.</div>';
-                return;
-            }
+            if (!data || data.length === 0) return;
 
-            // Filtrado a prueba de balas (ignora mayúsculas y espacios extra)
+            // 1. Filtrar los datos
             let filteredData = data.filter(p => {
                 if (!p.Equipo) return false;
-                const equipoLimpio = p.Equipo.toString().toLowerCase().trim();
-                return equipoLimpio === currentTab;
+                return p.Equipo.toString().toLowerCase().trim() === currentTab;
             });
-
-            // Lógica de diagnóstico
-            if (filteredData.length === 0) {
-                container.innerHTML = `<div class="debug-msg">
-                    <strong>¡Modo Diagnóstico!</strong> No se encontraron proyectos para la pestaña actual.<br>
-                    Esto leyó el sistema de tu Google Sheets (Revisa si la columna Equipo coincide):<br><br>
-                    <pre style="background:#eee; padding:10px; font-size:11px;">${JSON.stringify(data.slice(0,2), null, 2)}</pre>
-                </div>`;
-                return;
-            }
 
             if (qFilter !== 'all') {
                 filteredData = filteredData.filter(p => p.Q && p.Q.toString().trim() === qFilter);
             }
 
-            const areaRows = {};
-            let rowCount = 0;
+            // 2. ORDENAR por fecha de inicio para que el algoritmo funcione de izquierda a derecha
+            filteredData.sort((a, b) => {
+                const dateA = new Date((a['Fecha de Inicio'] || '').toString().split('T')[0]);
+                const dateB = new Date((b['Fecha de Inicio'] || '').toString().split('T')[0]);
+                return dateA - dateB;
+            });
+
+            // 3. MATRIZ DE COLISIONES: Rastrea en qué punto exacto termina el último proyecto de cada fila
+            const rowEndPositions = [];
 
             filteredData.forEach(project => {
-                const areaKey = normalizeText(project['Área']);
-                if (areaRows[areaKey] === undefined) { areaRows[areaKey] = rowCount++; }
-                const currentRow = areaRows[areaKey];
-
                 const leftPos = getTimelinePosition(project['Fecha de Inicio']);
                 const rightPos = getTimelinePosition(project['Fecha de Fin']);
                 
@@ -188,6 +185,17 @@
                 let width = rightPos - leftPos;
                 if (width < 2) width = 2; 
 
+                // Algoritmo Anti-Choques: Buscar la primera fila disponible
+                let currentRow = 0;
+                // Le sumamos 0.5% a leftPos para dejar un pequeño margen visual entre cajas de la misma fila
+                while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (leftPos - 0.5)) {
+                    currentRow++;
+                }
+
+                // Registrar que esta fila ahora está ocupada hasta la fecha final de este proyecto
+                rowEndPositions[currentRow] = rightPos;
+
+                // 4. Dibujar si está en el rango visible
                 if (rightPos > 0 && leftPos < 100) {
                     const bar = document.createElement('div');
                     bar.className = 'project-bar';
@@ -198,8 +206,11 @@
 
                     bar.style.left = `${displayLeft}%`;
                     bar.style.width = `${finalWidth}%`;
+                    
+                    // Aquí asignamos la fila calculada por el algoritmo (45px por fila)
                     bar.style.top = `${currentRow * 45}px`; 
                     
+                    const areaKey = normalizeText(project['Área']);
                     bar.style.backgroundColor = `var(--area-${areaKey}, var(--area-default))`;
 
                     const statusKey = normalizeText(project['Estado']);
@@ -217,11 +228,13 @@
                     container.appendChild(bar);
                 }
             });
-            container.style.height = `${rowCount * 45 + 50}px`;
+            
+            // Ajustar la altura del fondo blanco según la cantidad de filas que se usaron
+            container.style.height = `${rowEndPositions.length * 45 + 50}px`;
         }
 
         function switchTab(team) {
-            currentTab = team.toLowerCase().trim(); // A prueba de balas
+            currentTab = team.toLowerCase().trim(); 
             document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             document.getElementById('q-filter').value = 'all'; 
@@ -229,16 +242,13 @@
         }
 
         async function loadDataAndRender() {
-            const container = document.getElementById('projects-container');
-            container.innerHTML = '<div style="color: grey; padding: 20px; font-weight: bold;">Conectando con Google Sheets... ⏳</div>';
-
             try {
                 const response = await fetch(sheetApiUrl);
                 data = await response.json();
                 renderTodayLine();
                 renderProjects();
             } catch (error) {
-                container.innerHTML = `<div style="color: red; padding: 20px;"><strong>Error de conexión.</strong> Verifica que la URL del script termine en /exec y sea pública.</div>`;
+                console.error("Error", error);
             }
         }
 

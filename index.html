@@ -10,10 +10,10 @@
             --text-main: #333;
             --border-color: #ddd;
             
-            /* Colores de áreas - Puedes ajustarlos según tu manual de marca */
+            /* Colores de áreas - Idénticos a tu diseño */
             --area-logistica: #cf1a2c;
             --area-marketing: #00a499;
-            --area-smb: #8b572a;
+            --area-smb: #007b5e; /* Ajustado al verde de tu imagen */
             --area-human-ops: #4a2b72;
             --area-default: #17a2b8; 
             
@@ -30,30 +30,43 @@
         .tab.active { background: #0056b3; color: white; }
         .filters select { padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); }
 
-        .timeline-container { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; position: relative; overflow-x: auto; min-height: 400px;}
-        .months-header { display: flex; border-bottom: 2px solid #000; margin-bottom: 20px; position: relative;}
-        .month { flex: 1; text-align: center; font-weight: bold; padding: 10px 0; border-right: 1px dashed var(--border-color); color: #000080;}
-        .projects-area { position: relative; height: 100%; min-height: 300px; }
+        /* Contenedor principal con Scroll Horizontal */
+        .timeline-wrapper { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        
+        /* El lienzo interno: Forzamos un ancho mínimo grande para que las barras no queden enanas */
+        .timeline-scroll-area { min-width: 1800px; position: relative; }
 
+        /* Cabeceras de Meses y Semanas */
+        .months-header { display: flex; border-bottom: 2px solid #000; background: #1a237e; color: white; border-radius: 6px 6px 0 0;}
+        .month { text-align: center; font-weight: bold; padding: 10px 0; border-right: 1px solid rgba(255,255,255,0.2); box-sizing: border-box; }
+        
+        .weeks-header { display: flex; border-bottom: 2px solid var(--border-color); background: #f1f3f5; }
+        .week { text-align: center; font-size: 11px; padding: 5px 0; font-weight: 600; color: #1a237e; border-right: 1px dashed var(--border-color); box-sizing: border-box; }
+
+        /* Líneas verticales de fondo (Grid) */
+        .grid-lines { position: absolute; top: 70px; bottom: 0; left: 0; right: 0; display: flex; z-index: 0; pointer-events: none; }
+        .grid-line { border-right: 1px dashed var(--border-color); box-sizing: border-box; }
+
+        /* Área de proyectos */
+        .projects-area { position: relative; margin-top: 20px; min-height: 300px; z-index: 1; }
+
+        /* Cajas de proyectos con forma de píldora */
         .project-bar {
             position: absolute;
-            height: 35px;
-            border-radius: 6px;
+            height: 32px;
+            border-radius: 16px; /* Forma redonda como en tu imagen */
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 10px;
+            padding: 0 4px 0 12px; /* Espacio para el texto y las insignias */
             color: white;
             font-size: 12px;
             font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             transition: all 0.2s ease;
+            box-sizing: border-box;
         }
 
-        /* Efecto al pasar el mouse por encima (expande un poco para leer si está cortado) */
         .project-bar:hover {
             filter: brightness(1.1);
             z-index: 100;
@@ -62,14 +75,23 @@
             cursor: default;
         }
 
-        .badges { display: flex; gap: 5px; align-items: center; }
-        .badge { padding: 2px 6px; border-radius: 10px; font-size: 10px; background: rgba(255,255,255,0.3); }
-        .status-badge { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 2px solid white;}
+        /* Bloqueo estricto para que el texto no se salga de su caja */
+        .project-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            flex-grow: 1;
+            margin-right: 8px;
+        }
+
+        .badges { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+        .badge { padding: 2px 6px; border-radius: 10px; font-size: 9px; background: rgba(255,255,255,0.3); }
+        .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; }
         
-        .today-line { position: absolute; top: 0; bottom: -500px; width: 2px; background-color: #ff3b30; z-index: 10; }
-        .today-label { position: absolute; top: -25px; left: -15px; background: #ff3b30; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .today-line { position: absolute; top: 0; bottom: -50px; width: 2px; background-color: #ff3b30; z-index: 10; pointer-events: none;}
+        .today-label { position: absolute; top: -20px; left: -15px; background: #ff3b30; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
         
-        .debug-msg { padding: 20px; background: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 5px; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -94,33 +116,60 @@
         </div>
     </div>
 
-    <div class="timeline-container">
-        <div class="months-header">
-            <div class="month">Enero</div>
-            <div class="month">Febrero</div>
-            <div class="month">Marzo</div>
-            <div class="month">Abril</div>
-            <div class="month">Mayo</div>
-            <div class="month">Junio</div>
+    <div class="timeline-wrapper">
+        <div class="timeline-scroll-area">
             
+            <div class="months-header" id="months-header"></div>
+            <div class="weeks-header" id="weeks-header"></div>
+            
+            <div class="grid-lines" id="grid-lines"></div>
+            
+            <div class="projects-area" id="projects-container">
+                </div>
+
             <div id="today-marker" class="today-line" style="display: none;">
                 <div class="today-label">Hoy</div>
             </div>
-        </div>
 
-        <div class="projects-area" id="projects-container">
-            </div>
+        </div>
     </div>
 
     <script>
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
+        // Ventana de Enero a Junio
         const windowStart = new Date('2026-01-01T00:00:00');
         const windowEnd = new Date('2026-06-30T23:59:59');
         const totalDays = (windowEnd - windowStart) / (1000 * 60 * 60 * 24);
 
         let currentTab = 'automation ia'; 
         let data = []; 
+
+        // 1. GENERADOR DE CALENDARIO (Meses y Semanas exactas)
+        function renderCalendarHeaders() {
+            const monthsNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"];
+            const daysInMonths = [31, 28, 31, 30, 31, 30]; // Días reales 2026
+            
+            let htmlMonths = '';
+            let htmlWeeks = '';
+            let htmlGrid = '';
+
+            daysInMonths.forEach((days, i) => {
+                const monthWidthPct = (days / totalDays) * 100;
+                htmlMonths += `<div class="month" style="width: ${monthWidthPct}%;">${monthsNames[i]}</div>`;
+                
+                // Dividimos el mes visualmente en 4 semanas (estándar de Roadmaps)
+                for(let w = 1; w <= 4; w++) {
+                    const weekWidthPct = monthWidthPct / 4;
+                    htmlWeeks += `<div class="week" style="width: ${weekWidthPct}%;">Semana ${w}</div>`;
+                    htmlGrid += `<div class="grid-line" style="width: ${weekWidthPct}%;"></div>`;
+                }
+            });
+
+            document.getElementById('months-header').innerHTML = htmlMonths;
+            document.getElementById('weeks-header').innerHTML = htmlWeeks;
+            document.getElementById('grid-lines').innerHTML = htmlGrid;
+        }
 
         function normalizeText(text) {
             if (!text) return 'default';
@@ -140,10 +189,13 @@
             const formattedToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const todayPercentage = getTimelinePosition(formattedToday);
             const todayMarker = document.getElementById('today-marker');
+            const projectsArea = document.getElementById('projects-container');
             
             if (todayPercentage >= 0 && todayPercentage <= 100) {
                 todayMarker.style.left = `${todayPercentage}%`;
                 todayMarker.style.display = 'block';
+                // Que la línea baje hasta el final de los proyectos
+                setTimeout(() => { todayMarker.style.bottom = `-${projectsArea.offsetHeight}px`; }, 100);
             } else {
                 todayMarker.style.display = 'none';
             }
@@ -156,7 +208,6 @@
 
             if (!data || data.length === 0) return;
 
-            // 1. Filtrar los datos
             let filteredData = data.filter(p => {
                 if (!p.Equipo) return false;
                 return p.Equipo.toString().toLowerCase().trim() === currentTab;
@@ -166,14 +217,13 @@
                 filteredData = filteredData.filter(p => p.Q && p.Q.toString().trim() === qFilter);
             }
 
-            // 2. ORDENAR por fecha de inicio para que el algoritmo funcione de izquierda a derecha
+            // Ordenar por fecha de inicio
             filteredData.sort((a, b) => {
                 const dateA = new Date((a['Fecha de Inicio'] || '').toString().split('T')[0]);
                 const dateB = new Date((b['Fecha de Inicio'] || '').toString().split('T')[0]);
                 return dateA - dateB;
             });
 
-            // 3. MATRIZ DE COLISIONES: Rastrea en qué punto exacto termina el último proyecto de cada fila
             const rowEndPositions = [];
 
             filteredData.forEach(project => {
@@ -183,19 +233,16 @@
                 if (leftPos === null || rightPos === null) return;
                 
                 let width = rightPos - leftPos;
-                if (width < 2) width = 2; 
+                if (width < 1.5) width = 1.5; 
 
-                // Algoritmo Anti-Choques: Buscar la primera fila disponible
+                // ALGORITMO ANTI-COLISIÓN (Modificado para garantizar orden y separación)
                 let currentRow = 0;
-                // Le sumamos 0.5% a leftPos para dejar un pequeño margen visual entre cajas de la misma fila
-                while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (leftPos - 0.5)) {
+                // Dejamos un margen del 0.8% entre el final de una caja y el inicio de la siguiente
+                while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (leftPos - 0.8)) {
                     currentRow++;
                 }
-
-                // Registrar que esta fila ahora está ocupada hasta la fecha final de este proyecto
                 rowEndPositions[currentRow] = rightPos;
 
-                // 4. Dibujar si está en el rango visible
                 if (rightPos > 0 && leftPos < 100) {
                     const bar = document.createElement('div');
                     bar.className = 'project-bar';
@@ -207,8 +254,8 @@
                     bar.style.left = `${displayLeft}%`;
                     bar.style.width = `${finalWidth}%`;
                     
-                    // Aquí asignamos la fila calculada por el algoritmo (45px por fila)
-                    bar.style.top = `${currentRow * 45}px`; 
+                    // Separación vertical de 45px entre filas
+                    bar.style.top = `${currentRow * 42}px`; 
                     
                     const areaKey = normalizeText(project['Área']);
                     bar.style.backgroundColor = `var(--area-${areaKey}, var(--area-default))`;
@@ -218,8 +265,9 @@
                     const projName = project['Nombre del proyecto'] || 'Sin nombre';
                     const devName = project['Desarrollador'] || '';
 
+                    // El contenedor "project-title" previene que el texto se salga de la caja
                     bar.innerHTML = `
-                        <span title="${projName}">${projName}</span>
+                        <span class="project-title" title="${projName}">${projName}</span>
                         <div class="badges">
                             ${devName && devName.toLowerCase() !== 'n/a' ? `<span class="badge">${devName}</span>` : ''}
                             <span class="status-badge" style="background-color: ${statusColor}" title="Estado: ${project['Estado']}"></span>
@@ -229,8 +277,8 @@
                 }
             });
             
-            // Ajustar la altura del fondo blanco según la cantidad de filas que se usaron
-            container.style.height = `${rowEndPositions.length * 45 + 50}px`;
+            container.style.height = `${rowEndPositions.length * 42 + 20}px`;
+            renderTodayLine(); // Ajustar largo de la línea roja
         }
 
         function switchTab(team) {
@@ -243,12 +291,12 @@
 
         async function loadDataAndRender() {
             try {
+                renderCalendarHeaders(); // Dibuja la cuadrícula
                 const response = await fetch(sheetApiUrl);
                 data = await response.json();
-                renderTodayLine();
                 renderProjects();
             } catch (error) {
-                console.error("Error", error);
+                console.error("Error cargando los datos de Sheets", error);
             }
         }
 

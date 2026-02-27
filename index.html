@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap 2026</title>
+    <style>
+        /* Variables de colores base (Reemplazables por tu Design System) */
+        :root {
+            --bg-page: #f8f9fa;
+            --text-main: #333;
+            --border-color: #ddd;
+            
+            /* Colores de Áreas (Simulando tu imagen) */
+            --area-logistica: #cf1a2c;
+            --area-marketing: #00a499;
+            --area-smb: #8b572a;
+            --area-financial: #4a2b72;
+            
+            /* Estados */
+            --status-dev: #000;
+            --status-test: #f5a623;
+            --status-prod: #7ed321;
+            --status-piloto: #4a90e2;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-page); color: var(--text-main); margin: 0; padding: 20px; }
+        
+        /* Pestañas */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        .tab { padding: 10px 20px; cursor: pointer; border-radius: 5px; background: #eee; border: none; font-weight: bold; }
+        .tab.active { background: #0056b3; color: white; }
+
+        /* Contenedor del Timeline */
+        .timeline-container { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; position: relative; overflow-x: auto; min-height: 400px;}
+        
+        /* Cabecera de Meses */
+        .months-header { display: flex; border-bottom: 2px solid #000; margin-bottom: 20px; position: relative;}
+        .month { flex: 1; text-align: center; font-weight: bold; padding: 10px 0; border-right: 1px dashed var(--border-color); color: #000080;}
+        
+        /* Área de dibujado de proyectos */
+        .projects-area { position: relative; height: 300px; /* Altura de prueba */ }
+
+        /* La cajita del proyecto */
+        .project-bar {
+            position: absolute;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Insignias (Badges) */
+        .badges { display: flex; gap: 5px; align-items: center; }
+        .badge { padding: 2px 6px; border-radius: 10px; font-size: 10px; background: rgba(255,255,255,0.2); }
+        .status-badge { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 2px solid white;}
+        
+        /* Línea de HOY */
+        .today-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: red;
+            z-index: 10;
+        }
+        .today-label {
+            position: absolute;
+            top: -25px;
+            left: -15px;
+            background: red;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Roadmap de Productos 2026</h1>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('IA')">Automation IA</button>
+        <button class="tab" onclick="switchTab('Appian')">Appian</button>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label>Filtrar por Q: </label>
+        <select id="q-filter">
+            <option value="all">Todos</option>
+            <option value="Q1">Q1</option>
+            <option value="Q2">Q2</option>
+        </select>
+    </div>
+
+    <div class="timeline-container">
+        <div class="months-header">
+            <div class="month">Enero</div>
+            <div class="month">Febrero</div>
+            <div class="month">Marzo</div>
+            <div class="month">Abril</div>
+            <div class="month">Mayo</div>
+            <div class="month">Junio</div>
+            
+            <div id="today-marker" class="today-line">
+                <div class="today-label">Hoy</div>
+            </div>
+        </div>
+
+        <div class="projects-area" id="projects-container">
+            </div>
+    </div>
+
+    <script>
+        // 1. Aquí están los datos simulando lo que vendrá de Google Sheets
+        const data = [
+            // EQUIPO IA
+            { id: 1, team: 'IA', name: 'Agente IA Diseño - n8n', start: '2026-01-15', end: '2026-03-30', area: 'marketing', status: 'dev', dev: 'Willin', row: 0 },
+            { id: 2, team: 'IA', name: 'Inventario cíclico - n8n', start: '2026-01-05', end: '2026-02-28', area: 'logistica', status: 'prod', dev: 'Isabella', row: 1 },
+            { id: 3, team: 'IA', name: 'Agente de profundización - Dapta', start: '2026-03-05', end: '2026-04-20', area: 'smb', status: 'test', dev: 'Laura', row: 2 },
+            // EQUIPO APPIAN
+            { id: 4, team: 'Appian', name: 'Portal Proveedores RPA', start: '2026-02-01', end: '2026-05-15', area: 'financial', status: 'piloto', dev: null, row: 0 },
+            { id: 5, team: 'Appian', name: 'Migración Core', start: '2026-03-15', end: '2026-06-15', area: 'logistica', status: 'dev', dev: null, row: 1 }
+        ];
+
+        // 2. Configuración del visor de tiempo (Enero a Junio 2026)
+        const windowStart = new Date('2026-01-01');
+        const windowEnd = new Date('2026-06-30');
+        const totalDays = (windowEnd - windowStart) / (1000 * 60 * 60 * 24);
+
+        let currentTab = 'IA';
+
+        // 3. Función matemática para ubicar elementos en la línea de tiempo
+        function getTimelinePosition(dateString) {
+            const date = new Date(dateString);
+            const daysFromStart = (date - windowStart) / (1000 * 60 * 60 * 24);
+            return (daysFromStart / totalDays) * 100; // Devuelve un porcentaje %
+        }
+
+        // 4. Renderizar la línea de "HOY"
+        function renderTodayLine() {
+            // Utilizando la fecha actual real del sistema
+            const today = new Date('2026-02-27'); 
+            const todayPercentage = getTimelinePosition(today.toISOString().split('T')[0]);
+            const todayMarker = document.getElementById('today-marker');
+            
+            if (todayPercentage >= 0 && todayPercentage <= 100) {
+                todayMarker.style.left = `${todayPercentage}%`;
+            } else {
+                todayMarker.style.display = 'none'; // Ocultar si "hoy" no está en el rango de meses visible
+            }
+        }
+
+        // 5. Renderizar los proyectos
+        function renderProjects() {
+            const container = document.getElementById('projects-container');
+            container.innerHTML = ''; // Limpiar
+
+            const filteredData = data.filter(p => p.team === currentTab);
+
+            filteredData.forEach(project => {
+                const leftPos = getTimelinePosition(project.start);
+                const rightPos = getTimelinePosition(project.end);
+                const width = rightPos - leftPos;
+
+                // Crear la caja del proyecto
+                const bar = document.createElement('div');
+                bar.className = 'project-bar';
+                bar.style.left = `${leftPos}%`;
+                bar.style.width = `${width}%`;
+                bar.style.top = `${project.row * 50}px`; // 50px de separación entre filas
+                bar.style.backgroundColor = `var(--area-${project.area})`;
+
+                // Asignar color de estado
+                const statusColor = `var(--status-${project.status})`;
+
+                bar.innerHTML = `
+                    <span>${project.name}</span>
+                    <div class="badges">
+                        ${project.dev ? `<span class="badge">${project.dev}</span>` : ''}
+                        <span class="status-badge" style="background-color: ${statusColor}" title="${project.status}"></span>
+                    </div>
+                `;
+                container.appendChild(bar);
+            });
+        }
+
+        // 6. Lógica de Pestañas
+        function switchTab(team) {
+            currentTab = team;
+            // Actualizar UI de pestañas
+            document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderProjects();
+        }
+
+        // Inicializar
+        renderTodayLine();
+        renderProjects();
+    </script>
+</body>
+</html>

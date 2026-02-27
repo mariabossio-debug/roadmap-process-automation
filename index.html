@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roadmap 2026</title>
     <style>
-        /* Variables de colores base (Reemplazables por tu Design System) */
+        /* --- VARIABLES DE DISEÑO (Tu Design System entrará aquí después) --- */
         :root {
             --bg-page: #f8f9fa;
             --text-main: #333;
             --border-color: #ddd;
             
-            /* Colores de Áreas (Simulando tu imagen) */
+            /* Colores de Áreas basados en tu imagen (Añade o modifica los que necesites) */
             --area-logistica: #cf1a2c;
             --area-marketing: #00a499;
             --area-smb: #8b572a;
             --area-financial: #4a2b72;
+            --area-cs: #2e8b57;
+            --area-sales: #006400;
+            --area-partners: #ffa500;
+            --area-hubs: #ff0000;
+            --area-default: #17a2b8; /* Por si escribes un área nueva en Sheets */
             
             /* Estados */
             --status-dev: #000;
@@ -26,10 +31,12 @@
 
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-page); color: var(--text-main); margin: 0; padding: 20px; }
         
-        /* Pestañas */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        /* Controles (Pestañas y Filtros) */
+        .controls-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
+        .tabs { display: flex; gap: 10px; }
         .tab { padding: 10px 20px; cursor: pointer; border-radius: 5px; background: #eee; border: none; font-weight: bold; }
         .tab.active { background: #0056b3; color: white; }
+        .filters select { padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); }
 
         /* Contenedor del Timeline */
         .timeline-container { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; position: relative; overflow-x: auto; min-height: 400px;}
@@ -39,12 +46,12 @@
         .month { flex: 1; text-align: center; font-weight: bold; padding: 10px 0; border-right: 1px dashed var(--border-color); color: #000080;}
         
         /* Área de dibujado de proyectos */
-        .projects-area { position: relative; height: 300px; /* Altura de prueba */ }
+        .projects-area { position: relative; height: 100%; min-height: 300px; }
 
         /* La cajita del proyecto */
         .project-bar {
             position: absolute;
-            height: 40px;
+            height: 35px;
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -57,6 +64,14 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .project-bar:hover {
+            filter: brightness(1.1);
+            z-index: 100;
+            transform: scale(1.02);
+            cursor: default;
         }
 
         /* Insignias (Badges) */
@@ -68,16 +83,16 @@
         .today-line {
             position: absolute;
             top: 0;
-            bottom: 0;
+            bottom: -500px; /* Extiende la línea hacia abajo */
             width: 2px;
-            background-color: red;
+            background-color: #ff3b30;
             z-index: 10;
         }
         .today-label {
             position: absolute;
             top: -25px;
             left: -15px;
-            background: red;
+            background: #ff3b30;
             color: white;
             padding: 2px 8px;
             border-radius: 4px;
@@ -90,18 +105,22 @@
 
     <h1>Roadmap de Productos 2026</h1>
 
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('IA')">Automation IA</button>
-        <button class="tab" onclick="switchTab('Appian')">Appian</button>
-    </div>
+    <div class="controls-header">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('IA')">Automation IA</button>
+            <button class="tab" onclick="switchTab('Appian')">Appian</button>
+        </div>
 
-    <div style="margin-bottom: 20px;">
-        <label>Filtrar por Q: </label>
-        <select id="q-filter">
-            <option value="all">Todos</option>
-            <option value="Q1">Q1</option>
-            <option value="Q2">Q2</option>
-        </select>
+        <div class="filters">
+            <label>Filtrar por Q: </label>
+            <select id="q-filter" onchange="renderProjects()">
+                <option value="all">Todos</option>
+                <option value="Q1">Q1</option>
+                <option value="Q2">Q2</option>
+                <option value="Q3">Q3</option>
+                <option value="Q4">Q4</option>
+            </select>
+        </div>
     </div>
 
     <div class="timeline-container">
@@ -113,7 +132,7 @@
             <div class="month">Mayo</div>
             <div class="month">Junio</div>
             
-            <div id="today-marker" class="today-line">
+            <div id="today-marker" class="today-line" style="display: none;">
                 <div class="today-label">Hoy</div>
             </div>
         </div>
@@ -123,91 +142,163 @@
     </div>
 
     <script>
-        // 1. Aquí están los datos simulando lo que vendrá de Google Sheets
-        const data = [
-            // EQUIPO IA
-            { id: 1, team: 'IA', name: 'Agente IA Diseño - n8n', start: '2026-01-15', end: '2026-03-30', area: 'marketing', status: 'dev', dev: 'Willin', row: 0 },
-            { id: 2, team: 'IA', name: 'Inventario cíclico - n8n', start: '2026-01-05', end: '2026-02-28', area: 'logistica', status: 'prod', dev: 'Isabella', row: 1 },
-            { id: 3, team: 'IA', name: 'Agente de profundización - Dapta', start: '2026-03-05', end: '2026-04-20', area: 'smb', status: 'test', dev: 'Laura', row: 2 },
-            // EQUIPO APPIAN
-            { id: 4, team: 'Appian', name: 'Portal Proveedores RPA', start: '2026-02-01', end: '2026-05-15', area: 'financial', status: 'piloto', dev: null, row: 0 },
-            { id: 5, team: 'Appian', name: 'Migración Core', start: '2026-03-15', end: '2026-06-15', area: 'logistica', status: 'dev', dev: null, row: 1 }
-        ];
-
-        // 2. Configuración del visor de tiempo (Enero a Junio 2026)
-        const windowStart = new Date('2026-01-01');
-        const windowEnd = new Date('2026-06-30');
+        // ====================================================================
+        // ⚠️ PASO CRÍTICO: PEGA AQUÍ LA URL DE TU SCRIPT DE GOOGLE ⚠️
+        // ====================================================================
+        const sheetApiUrl = 'TU_URL_DE_APPS_SCRIPT_AQUI'; 
+        
+        // Configuración de la ventana de tiempo (Enero a Junio 2026)
+        const windowStart = new Date('2026-01-01T00:00:00');
+        const windowEnd = new Date('2026-06-30T23:59:59');
         const totalDays = (windowEnd - windowStart) / (1000 * 60 * 60 * 24);
 
         let currentTab = 'IA';
+        let data = []; 
 
-        // 3. Función matemática para ubicar elementos en la línea de tiempo
-        function getTimelinePosition(dateString) {
-            const date = new Date(dateString);
-            const daysFromStart = (date - windowStart) / (1000 * 60 * 60 * 24);
-            return (daysFromStart / totalDays) * 100; // Devuelve un porcentaje %
+        // Limpia textos (ej: "Logística" -> "logistica") para que el CSS no falle
+        function normalizeText(text) {
+            if (!text) return 'default';
+            return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
         }
 
-        // 4. Renderizar la línea de "HOY"
+        // Calcula la posición horizontal en % basándose en las fechas
+        function getTimelinePosition(dateString) {
+            if (!dateString) return null;
+            const date = new Date(dateString + 'T00:00:00'); 
+            const daysFromStart = (date - windowStart) / (1000 * 60 * 60 * 24);
+            return (daysFromStart / totalDays) * 100; 
+        }
+
+        // Dibuja la línea roja del día actual
         function renderTodayLine() {
-            // Utilizando la fecha actual real del sistema
-            const today = new Date('2026-02-27'); 
-            const todayPercentage = getTimelinePosition(today.toISOString().split('T')[0]);
+            const today = new Date(); 
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const formattedToday = `${yyyy}-${mm}-${dd}`;
+
+            const todayPercentage = getTimelinePosition(formattedToday);
             const todayMarker = document.getElementById('today-marker');
             
+            // Solo mostrar si el "hoy" está dentro de los meses que estamos viendo
             if (todayPercentage >= 0 && todayPercentage <= 100) {
                 todayMarker.style.left = `${todayPercentage}%`;
+                todayMarker.style.display = 'block';
             } else {
-                todayMarker.style.display = 'none'; // Ocultar si "hoy" no está en el rango de meses visible
+                todayMarker.style.display = 'none';
             }
         }
 
-        // 5. Renderizar los proyectos
+        // Dibuja las cajas de los proyectos
         function renderProjects() {
             const container = document.getElementById('projects-container');
-            container.innerHTML = ''; // Limpiar
+            const qFilter = document.getElementById('q-filter').value;
+            container.innerHTML = ''; 
 
-            const filteredData = data.filter(p => p.team === currentTab);
+            if (data.length === 0) return;
+
+            // 1. Filtrar por pestaña y Q
+            let filteredData = data.filter(p => p.Equipo === currentTab);
+            if (qFilter !== 'all') {
+                filteredData = filteredData.filter(p => p.Q === qFilter);
+            }
+
+            // 2. Agrupar filas para evitar que se pisen entre ellas
+            const areaRows = {};
+            let rowCount = 0;
 
             filteredData.forEach(project => {
-                const leftPos = getTimelinePosition(project.start);
-                const rightPos = getTimelinePosition(project.end);
-                const width = rightPos - leftPos;
+                const areaKey = normalizeText(project['Área']);
+                
+                if (areaRows[areaKey] === undefined) {
+                    areaRows[areaKey] = rowCount++;
+                }
+                const currentRow = areaRows[areaKey];
 
-                // Crear la caja del proyecto
-                const bar = document.createElement('div');
-                bar.className = 'project-bar';
-                bar.style.left = `${leftPos}%`;
-                bar.style.width = `${width}%`;
-                bar.style.top = `${project.row * 50}px`; // 50px de separación entre filas
-                bar.style.backgroundColor = `var(--area-${project.area})`;
+                const leftPos = getTimelinePosition(project['Fecha de Inicio']);
+                const rightPos = getTimelinePosition(project['Fecha de Fin']);
+                
+                if (leftPos === null || rightPos === null) return;
+                
+                let width = rightPos - leftPos;
+                if (width < 2) width = 2; // Ancho mínimo visual
 
-                // Asignar color de estado
-                const statusColor = `var(--status-${project.status})`;
+                // 3. Dibujar solo si está dentro de la pantalla visible
+                if (rightPos > 0 && leftPos < 100) {
+                    const bar = document.createElement('div');
+                    bar.className = 'project-bar';
+                    
+                    // Ajuste de cortes si se sale del inicio o el final del semestre
+                    const displayLeft = Math.max(0, leftPos);
+                    const displayWidth = width - (displayLeft - leftPos);
+                    const finalWidth = Math.min(displayWidth, 100 - displayLeft);
 
-                bar.innerHTML = `
-                    <span>${project.name}</span>
-                    <div class="badges">
-                        ${project.dev ? `<span class="badge">${project.dev}</span>` : ''}
-                        <span class="status-badge" style="background-color: ${statusColor}" title="${project.status}"></span>
-                    </div>
-                `;
-                container.appendChild(bar);
+                    bar.style.left = `${displayLeft}%`;
+                    bar.style.width = `${finalWidth}%`;
+                    bar.style.top = `${currentRow * 45}px`; // 45px de separación vertical
+                    
+                    const cssAreaVar = `--area-${areaKey}`;
+                    bar.style.backgroundColor = `var(${cssAreaVar}, var(--area-default))`;
+
+                    const statusKey = normalizeText(project['Estado']);
+                    const statusColor = `var(--status-${statusKey}, #ccc)`; 
+
+                    const projName = project['Nombre del proyecto'] || 'Sin nombre';
+                    const devName = project['Desarrollador'] || '';
+
+                    bar.innerHTML = `
+                        <span title="${projName}">${projName}</span>
+                        <div class="badges">
+                            ${devName ? `<span class="badge">${devName}</span>` : ''}
+                            <span class="status-badge" style="background-color: ${statusColor}" title="Estado: ${project['Estado'] || 'Sin estado'}"></span>
+                        </div>
+                    `;
+                    container.appendChild(bar);
+                }
             });
+            
+            // Ajustar alto del contenedor blanco dependiendo de cuántos proyectos hay
+            container.style.height = `${rowCount * 45 + 50}px`;
         }
 
-        // 6. Lógica de Pestañas
+        // Cambiar pestaña IA / Appian
         function switchTab(team) {
             currentTab = team;
-            // Actualizar UI de pestañas
             document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
+            
+            document.getElementById('q-filter').value = 'all'; // Resetea el filtro
             renderProjects();
         }
 
-        // Inicializar
-        renderTodayLine();
-        renderProjects();
+        // Conecta con Apps Script y trae el JSON
+        async function loadDataAndRender() {
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '<div style="color: grey; padding: 20px; font-weight: bold;">Cargando roadmap desde Sheets... ⏳</div>';
+
+            try {
+                if (sheetApiUrl === 'TU_URL_DE_APPS_SCRIPT_AQUI') {
+                    throw new Error("Falta pegar la URL de Apps Script en la línea 127 del código HTML.");
+                }
+
+                const response = await fetch(sheetApiUrl);
+                data = await response.json();
+                
+                renderTodayLine();
+                renderProjects();
+
+            } catch (error) {
+                console.error("Error:", error);
+                container.innerHTML = `<div style="color: red; padding: 20px;">
+                    <strong>Error:</strong> No se pudieron cargar los datos.<br><br>
+                    ${error.message}
+                </div>`;
+            }
+        }
+
+        // Arranca el motor
+        loadDataAndRender();
+
     </script>
 </body>
 </html>

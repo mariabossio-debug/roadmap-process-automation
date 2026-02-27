@@ -4,18 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roadmap 2026</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-page: #f8f9fa;
-            --text-main: #333;
-            --border-color: #ddd;
+            /* Paleta Oficial Bold */
+            --bold-coral: #FF2847;
+            --bold-azul: #121E6C;
+            --bold-azul-vibrante: #080EFF;
+            --bold-blanco: #F7F8FB;
+            --bold-gris-oscuro: #CCCCCC;
+            --bold-gris-claro: #F2F2F2;
             
-            /* Colores de áreas - Idénticos a tu diseño */
-            --area-logistica: #cf1a2c;
-            --area-marketing: #00a499;
-            --area-smb: #007b5e; /* Ajustado al verde de tu imagen */
-            --area-human-ops: #4a2b72;
-            --area-default: #17a2b8; 
+            /* Asignación a la Interfaz */
+            --bg-page: var(--bold-blanco);
+            --text-main: var(--bold-azul);
+            --border-color: var(--bold-gris-oscuro);
+            
+            /* Colores de áreas adaptados a la marca */
+            --area-logistica: var(--bold-coral);
+            --area-marketing: var(--bold-azul-vibrante);
+            --area-smb: #007b5e; /* Mantenemos un verde para contraste, puedes cambiarlo */
+            --area-human-ops: var(--bold-azul);
+            /* Degradado oficial como default */
+            --area-default: linear-gradient(135deg, #d00030 0%, #00308f 100%); 
             
             --status-dev: #000;
             --status-test: #f5a623;
@@ -23,45 +38,76 @@
             --status-piloto: #4a90e2;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-page); color: var(--text-main); margin: 0; padding: 20px; }
-        .controls-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
-        .tabs { display: flex; gap: 10px; }
-        .tab { padding: 10px 20px; cursor: pointer; border-radius: 5px; background: #eee; border: none; font-weight: bold; }
-        .tab.active { background: #0056b3; color: white; }
-        .filters select { padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); }
+        /* Tipografía Base */
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 400;
+            background-color: var(--bg-page); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 20px; 
+        }
 
-        /* Contenedor principal con Scroll Horizontal */
-        .timeline-wrapper { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        /* Cabecera con Logo */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .page-header img { height: 40px; }
+        .page-header h1 { font-weight: 600; font-size: 24px; margin: 0; color: var(--bold-azul); }
+
+        .controls-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--bold-gris-claro); padding-bottom: 15px; margin-bottom: 20px; }
         
-        /* El lienzo interno: Forzamos un ancho mínimo grande para que las barras no queden enanas */
+        /* Botones */
+        .tabs { display: flex; gap: 10px; }
+        .tab { 
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
+            padding: 10px 25px; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            background: var(--bold-gris-claro); 
+            color: var(--bold-azul);
+            border: none; 
+            transition: all 0.3s ease;
+        }
+        .tab.active { 
+            background: var(--bold-coral); 
+            color: #fff; 
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2);
+        }
+        
+        .filters label { font-weight: 600; font-size: 14px; margin-right: 10px;}
+        .filters select { font-family: 'Montserrat', sans-serif; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--bold-gris-oscuro); color: var(--bold-azul); outline: none;}
+
+        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; overflow-x: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
         .timeline-scroll-area { min-width: 1800px; position: relative; }
 
-        /* Cabeceras de Meses y Semanas */
-        .months-header { display: flex; border-bottom: 2px solid #000; background: #1a237e; color: white; border-radius: 6px 6px 0 0;}
-        .month { text-align: center; font-weight: bold; padding: 10px 0; border-right: 1px solid rgba(255,255,255,0.2); box-sizing: border-box; }
+        .months-header { display: flex; border-bottom: 3px solid var(--bold-coral); background: var(--bold-azul); color: white; border-radius: 6px 6px 0 0;}
+        .month { text-align: center; font-weight: 600; padding: 12px 0; border-right: 1px solid rgba(255,255,255,0.1); box-sizing: border-box; }
         
-        .weeks-header { display: flex; border-bottom: 2px solid var(--border-color); background: #f1f3f5; }
-        .week { text-align: center; font-size: 11px; padding: 5px 0; font-weight: 600; color: #1a237e; border-right: 1px dashed var(--border-color); box-sizing: border-box; }
+        .weeks-header { display: flex; border-bottom: 1px solid var(--border-color); background: var(--bold-gris-claro); }
+        .week { text-align: center; font-size: 11px; padding: 6px 0; font-weight: 600; color: var(--bold-azul); border-right: 1px dashed var(--bold-gris-oscuro); box-sizing: border-box; }
 
-        /* Líneas verticales de fondo (Grid) */
-        .grid-lines { position: absolute; top: 70px; bottom: 0; left: 0; right: 0; display: flex; z-index: 0; pointer-events: none; }
-        .grid-line { border-right: 1px dashed var(--border-color); box-sizing: border-box; }
+        .grid-lines { position: absolute; top: 75px; bottom: 0; left: 0; right: 0; display: flex; z-index: 0; pointer-events: none; }
+        .grid-line { border-right: 1px dashed var(--bold-gris-claro); box-sizing: border-box; }
 
-        /* Área de proyectos */
-        .projects-area { position: relative; margin-top: 20px; min-height: 300px; z-index: 1; }
+        .projects-area { position: relative; margin-top: 25px; min-height: 300px; z-index: 1; }
 
-        /* Cajas de proyectos con forma de píldora */
         .project-bar {
             position: absolute;
             height: 32px;
-            border-radius: 16px; /* Forma redonda como en tu imagen */
+            border-radius: 16px; 
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 4px 0 12px; /* Espacio para el texto y las insignias */
+            padding: 0 6px 0 14px; 
             color: white;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600;
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             transition: all 0.2s ease;
             box-sizing: border-box;
@@ -70,12 +116,11 @@
         .project-bar:hover {
             filter: brightness(1.1);
             z-index: 100;
-            transform: scale(1.02);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transform: scale(1.01);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             cursor: default;
         }
 
-        /* Bloqueo estricto para que el texto no se salga de su caja */
         .project-title {
             white-space: nowrap;
             overflow: hidden;
@@ -85,18 +130,21 @@
             margin-right: 8px;
         }
 
-        .badges { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
-        .badge { padding: 2px 6px; border-radius: 10px; font-size: 9px; background: rgba(255,255,255,0.3); }
-        .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; }
+        .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
+        .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.3);}
         
-        .today-line { position: absolute; top: 0; bottom: -50px; width: 2px; background-color: #ff3b30; z-index: 10; pointer-events: none;}
-        .today-label { position: absolute; top: -20px; left: -15px; background: #ff3b30; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .today-line { position: absolute; top: 0; bottom: -50px; width: 2px; background-color: var(--bold-coral); z-index: 10; pointer-events: none;}
+        .today-label { position: absolute; top: -24px; left: -15px; background: var(--bold-coral); color: white; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
         
     </style>
 </head>
 <body>
 
-    <h1>Roadmap de Productos 2026</h1>
+    <div class="page-header">
+        <img src="https://bold-process-automation.github.io/assets-project-graphic-design/bold-logo-palabra-azul.png" alt="Logo Bold">
+        <h1>Roadmap de Productos 2026</h1>
+    </div>
 
     <div class="controls-header">
         <div class="tabs">
@@ -107,11 +155,11 @@
         <div class="filters">
             <label>Filtrar por Q: </label>
             <select id="q-filter" onchange="renderProjects()">
-                <option value="all">Todos</option>
-                <option value="Q1">Q1</option>
-                <option value="Q2">Q2</option>
-                <option value="Q3">Q3</option>
-                <option value="Q4">Q4</option>
+                <option value="all">Todos los Q</option>
+                <option value="Q1">Quarter 1</option>
+                <option value="Q2">Quarter 2</option>
+                <option value="Q3">Quarter 3</option>
+                <option value="Q4">Quarter 4</option>
             </select>
         </div>
     </div>
@@ -124,8 +172,7 @@
             
             <div class="grid-lines" id="grid-lines"></div>
             
-            <div class="projects-area" id="projects-container">
-                </div>
+            <div class="projects-area" id="projects-container"></div>
 
             <div id="today-marker" class="today-line" style="display: none;">
                 <div class="today-label">Hoy</div>
@@ -135,9 +182,9 @@
     </div>
 
     <script>
+        // Tu URL de Apps Script intacta
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
-        // Ventana de Enero a Junio
         const windowStart = new Date('2026-01-01T00:00:00');
         const windowEnd = new Date('2026-06-30T23:59:59');
         const totalDays = (windowEnd - windowStart) / (1000 * 60 * 60 * 24);
@@ -145,10 +192,9 @@
         let currentTab = 'automation ia'; 
         let data = []; 
 
-        // 1. GENERADOR DE CALENDARIO (Meses y Semanas exactas)
         function renderCalendarHeaders() {
             const monthsNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"];
-            const daysInMonths = [31, 28, 31, 30, 31, 30]; // Días reales 2026
+            const daysInMonths = [31, 28, 31, 30, 31, 30]; 
             
             let htmlMonths = '';
             let htmlWeeks = '';
@@ -158,7 +204,6 @@
                 const monthWidthPct = (days / totalDays) * 100;
                 htmlMonths += `<div class="month" style="width: ${monthWidthPct}%;">${monthsNames[i]}</div>`;
                 
-                // Dividimos el mes visualmente en 4 semanas (estándar de Roadmaps)
                 for(let w = 1; w <= 4; w++) {
                     const weekWidthPct = monthWidthPct / 4;
                     htmlWeeks += `<div class="week" style="width: ${weekWidthPct}%;">Semana ${w}</div>`;
@@ -194,7 +239,6 @@
             if (todayPercentage >= 0 && todayPercentage <= 100) {
                 todayMarker.style.left = `${todayPercentage}%`;
                 todayMarker.style.display = 'block';
-                // Que la línea baje hasta el final de los proyectos
                 setTimeout(() => { todayMarker.style.bottom = `-${projectsArea.offsetHeight}px`; }, 100);
             } else {
                 todayMarker.style.display = 'none';
@@ -217,7 +261,6 @@
                 filteredData = filteredData.filter(p => p.Q && p.Q.toString().trim() === qFilter);
             }
 
-            // Ordenar por fecha de inicio
             filteredData.sort((a, b) => {
                 const dateA = new Date((a['Fecha de Inicio'] || '').toString().split('T')[0]);
                 const dateB = new Date((b['Fecha de Inicio'] || '').toString().split('T')[0]);
@@ -235,9 +278,7 @@
                 let width = rightPos - leftPos;
                 if (width < 1.5) width = 1.5; 
 
-                // ALGORITMO ANTI-COLISIÓN (Modificado para garantizar orden y separación)
                 let currentRow = 0;
-                // Dejamos un margen del 0.8% entre el final de una caja y el inicio de la siguiente
                 while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (leftPos - 0.8)) {
                     currentRow++;
                 }
@@ -253,19 +294,22 @@
 
                     bar.style.left = `${displayLeft}%`;
                     bar.style.width = `${finalWidth}%`;
-                    
-                    // Separación vertical de 45px entre filas
                     bar.style.top = `${currentRow * 42}px`; 
                     
                     const areaKey = normalizeText(project['Área']);
-                    bar.style.backgroundColor = `var(--area-${areaKey}, var(--area-default))`;
+                    
+                    // Asignación de color: Si es 'default', aplica el degradado corporativo
+                    if (areaKey === 'default') {
+                        bar.style.background = `var(--area-default)`;
+                    } else {
+                        bar.style.background = `var(--area-${areaKey}, var(--bold-azul))`;
+                    }
 
                     const statusKey = normalizeText(project['Estado']);
                     const statusColor = `var(--status-${statusKey}, #ccc)`; 
                     const projName = project['Nombre del proyecto'] || 'Sin nombre';
                     const devName = project['Desarrollador'] || '';
 
-                    // El contenedor "project-title" previene que el texto se salga de la caja
                     bar.innerHTML = `
                         <span class="project-title" title="${projName}">${projName}</span>
                         <div class="badges">
@@ -278,7 +322,7 @@
             });
             
             container.style.height = `${rowEndPositions.length * 42 + 20}px`;
-            renderTodayLine(); // Ajustar largo de la línea roja
+            renderTodayLine(); 
         }
 
         function switchTab(team) {
@@ -291,12 +335,12 @@
 
         async function loadDataAndRender() {
             try {
-                renderCalendarHeaders(); // Dibuja la cuadrícula
+                renderCalendarHeaders(); 
                 const response = await fetch(sheetApiUrl);
                 data = await response.json();
                 renderProjects();
             } catch (error) {
-                console.error("Error cargando los datos de Sheets", error);
+                console.error("Error cargando los datos", error);
             }
         }
 

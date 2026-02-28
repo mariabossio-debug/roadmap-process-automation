@@ -113,17 +113,16 @@
         .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.3);}
         .project-bar[data-area="legal"] .status-badge { border-color: var(--bold-azul); }
         
-        /* Línea de Hoy con diseño actualizado */
         .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background-color: var(--bold-coral); z-index: 20; pointer-events: none;}
         .today-label { 
             position: absolute; 
-            bottom: 12px; /* Se sitúa flotando justo al fondo */
-            left: 50%; /* Inicia en el centro exacto de la línea */
-            transform: translateX(-50%); /* Se auto-centra matemáticamente */
+            bottom: 12px; 
+            left: 50%; 
+            transform: translateX(-50%); 
             background: var(--bold-coral); 
             color: white; 
             padding: 5px 16px; 
-            border-radius: 12px; /* Redondita como en tu imagen de referencia */
+            border-radius: 12px; 
             font-size: 11px; 
             font-weight: 700; 
             box-shadow: 0 2px 6px rgba(0,0,0,0.25);
@@ -270,13 +269,20 @@
 
             if (!data || data.length === 0) return;
 
+            // 1. Filtro por equipo (pestaña)
             let filteredData = data.filter(p => {
                 if (!p.Equipo) return false;
                 return p.Equipo.toString().toLowerCase().trim() === currentTab;
             });
 
+            // 2. Filtro ROBUSTO por Quarter
             if (qFilter !== 'all') {
-                filteredData = filteredData.filter(p => p.Q && p.Q.toString().trim() === qFilter);
+                filteredData = filteredData.filter(p => {
+                    const qValue = p['Q']; // Lee directo de tu columna Q
+                    if (!qValue) return false;
+                    // Remueve espacios y pone en mayúscula para evitar errores humanos en Sheets
+                    return qValue.toString().trim().toUpperCase() === qFilter.toUpperCase();
+                });
             }
 
             filteredData.sort((a, b) => {
@@ -286,7 +292,6 @@
             });
 
             const rowEndPositions = [];
-            
             const containerWidth = container.offsetWidth || 3200; 
 
             filteredData.forEach(project => {
@@ -348,8 +353,31 @@
                 }
             });
             
-            // Le damos 60px de respiro al final para que quepa perfecto el circulito de "Hoy"
             container.style.height = `${rowEndPositions.length * 42 + 60}px`;
+
+            // AUTO-SCROLL MÁGICO
+            setTimeout(() => {
+                const wrapper = document.querySelector('.timeline-wrapper');
+                const scrollArea = document.querySelector('.timeline-scroll-area');
+                if (!wrapper || !scrollArea) return;
+                
+                const scrollWidth = scrollArea.offsetWidth;
+                let targetLeft = 0;
+
+                // Calculamos en qué porcentaje del año empieza cada Q
+                if (qFilter === 'Q2') targetLeft = (90 / 365) * scrollWidth; // Empieza Abril
+                else if (qFilter === 'Q3') targetLeft = (181 / 365) * scrollWidth; // Empieza Julio
+                else if (qFilter === 'Q4') targetLeft = (273 / 365) * scrollWidth; // Empieza Octubre
+                else if (qFilter === 'all') {
+                    // Si elige "Todos", lo centramos amablemente en la fecha de Hoy
+                    const today = new Date();
+                    const daysPassed = (today - windowStart) / (1000 * 60 * 60 * 24);
+                    const todayPosition = (daysPassed / 365) * scrollWidth;
+                    targetLeft = Math.max(0, todayPosition - 400); // 400px de margen para no dejar el "hoy" contra la pared
+                }
+
+                wrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
+            }, 50);
         }
 
         function switchTab(team) {

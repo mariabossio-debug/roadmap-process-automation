@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roadmap 2026</title>
+    <title>Roadmap Process Automation Team</title>
+    
+    <link rel="icon" type="image/png" href="https://bold-process-automation.github.io/assets-project-graphic-design/bold-logo-palabra-azul.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -18,15 +20,13 @@
             --bold-blanco: #F7F8FB;
             --bold-gris-oscuro: #CCCCCC;
             --bold-gris-claro: #F2F2F2;
+            --bold-gris-lineas: #A0AABF; /* Color para divisiones de mes */
             
-            /* Asignación a la Interfaz */
             --bg-page: var(--bold-blanco);
             --text-main: var(--bold-azul);
             --border-color: var(--bold-gris-oscuro);
             
-            /* =========================================
-               NUEVOS COLORES DE ÁREAS 
-               ========================================= */
+            /* Colores de Áreas */
             --area-risk: #052d65;
             --area-financial: #c31a2f;
             --area-sales: #692e60;
@@ -34,10 +34,9 @@
             --area-legal: #ffc217;
             --area-cs: #0b3b26;
             --area-logistica: #121f6c;
-            --area-hubs: var(--bold-coral); /* Rojo oficial Bold */
+            --area-hubs: var(--bold-coral); 
             --area-marketing: #0097a7;
             
-            /* Degradado oficial como default por si agregas un área nueva y olvidas ponerle color */
             --area-default: linear-gradient(135deg, #d00030 0%, #00308f 100%); 
             
             --status-dev: #000;
@@ -46,105 +45,54 @@
             --status-piloto: #4a90e2;
         }
 
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            font-weight: 400;
-            background-color: var(--bg-page); 
-            color: var(--text-main); 
-            margin: 0; 
-            padding: 20px; 
-        }
+        body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color: var(--bg-page); color: var(--text-main); margin: 0; padding: 20px; }
 
-        .page-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
+        .page-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
         .page-header img { height: 40px; }
-        .page-header h1 { font-weight: 600; font-size: 24px; margin: 0; color: var(--bold-azul); }
+        .page-header h1 { font-weight: 700; font-size: 24px; margin: 0; color: var(--bold-azul); }
 
         .controls-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--bold-gris-claro); padding-bottom: 15px; margin-bottom: 20px; }
         
         .tabs { display: flex; gap: 10px; }
-        .tab { 
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 400;
-            padding: 10px 25px; 
-            cursor: pointer; 
-            border-radius: 6px; 
-            background: var(--bold-gris-claro); 
-            color: var(--bold-azul);
-            border: none; 
-            transition: all 0.3s ease;
-        }
-        .tab.active { 
-            background: var(--bold-coral); 
-            color: #fff; 
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2);
-        }
+        .tab { font-family: 'Montserrat', sans-serif; font-weight: 400; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.3s ease; }
+        .tab.active { background: var(--bold-coral); color: #fff; font-weight: 600; box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2); }
         
         .filters label { font-weight: 600; font-size: 14px; margin-right: 10px;}
         .filters select { font-family: 'Montserrat', sans-serif; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--bold-gris-oscuro); color: var(--bold-azul); outline: none;}
 
         .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; overflow-x: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
-        .timeline-scroll-area { min-width: 1800px; position: relative; }
+        
+        /* Modificado para soportar 12 meses sin apretarse (3200px de ancho mínimo) */
+        .timeline-scroll-area { min-width: 3200px; position: relative; }
 
-        .months-header { display: flex; border-bottom: 3px solid var(--bold-coral); background: var(--bold-azul); color: white; border-radius: 6px 6px 0 0;}
-        .month { text-align: center; font-weight: 600; padding: 12px 0; border-right: 1px solid rgba(255,255,255,0.1); box-sizing: border-box; }
+        /* Cabecera de Quarters */
+        .quarters-header { display: flex; border-bottom: 2px solid #fff; background: var(--bold-coral); color: white; border-radius: 8px 8px 0 0;}
+        .quarter { text-align: center; font-weight: 700; font-size: 14px; padding: 6px 0; border-right: 2px solid rgba(255,255,255,0.4); box-sizing: border-box; }
+        .quarter:last-child { border-right: none; }
+
+        /* Cabecera de Meses y Semanas */
+        .months-header { display: flex; border-bottom: 3px solid var(--bold-coral); background: var(--bold-azul); color: white; }
+        .month { text-align: center; font-weight: 600; padding: 10px 0; border-right: 2px solid rgba(255,255,255,0.3); box-sizing: border-box; }
         
         .weeks-header { display: flex; border-bottom: 1px solid var(--border-color); background: var(--bold-gris-claro); }
         .week { text-align: center; font-size: 11px; padding: 6px 0; font-weight: 600; color: var(--bold-azul); border-right: 1px dashed var(--bold-gris-oscuro); box-sizing: border-box; }
 
-        .grid-lines { position: absolute; top: 75px; bottom: 0; left: 0; right: 0; display: flex; z-index: 0; pointer-events: none; }
-        .grid-line { border-right: 1px dashed var(--bold-gris-claro); box-sizing: border-box; }
+        /* Líneas de Grid (Diferencia clara entre Meses y Semanas) */
+        .grid-lines { position: absolute; top: 105px; bottom: 0; left: 0; right: 0; display: flex; z-index: 0; pointer-events: none; }
+        .grid-month-container { display: flex; border-right: 2px solid var(--bold-gris-lineas); box-sizing: border-box; height: 100%;}
+        .grid-week { flex: 1; border-right: 1px dashed var(--bold-gris-claro); box-sizing: border-box; height: 100%; }
+        .grid-month-container .grid-week:last-child { border-right: none; }
 
         .projects-area { position: relative; margin-top: 25px; min-height: 300px; z-index: 1; }
 
-        .project-bar {
-            position: absolute;
-            height: 32px;
-            border-radius: 16px; 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 6px 0 14px; 
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-            transition: all 0.2s ease;
-            box-sizing: border-box;
-        }
+        .project-bar { position: absolute; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 14px; color: white; font-size: 12px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.15); transition: all 0.2s ease; box-sizing: border-box; }
+        .project-bar[data-area="legal"] { color: var(--bold-azul); }
+        .project-bar:hover { filter: brightness(1.1); z-index: 100; transform: scale(1.01); box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: default; }
 
-        /* Regla especial para "Legal" (Amarillo) para que el texto sea oscuro y se pueda leer */
-        .project-bar[data-area="legal"] {
-            color: var(--bold-azul);
-        }
-
-        .project-bar:hover {
-            filter: brightness(1.1);
-            z-index: 100;
-            transform: scale(1.01);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            cursor: default;
-        }
-
-        .project-title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            flex-grow: 1;
-            margin-right: 8px;
-        }
-
+        .project-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; flex-grow: 1; margin-right: 8px; }
         .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
         .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
-        /* Color oscuro para el badge de Legal */
         .project-bar[data-area="legal"] .badge { background: rgba(0,0,0,0.1); }
-
         .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.3);}
         .project-bar[data-area="legal"] .status-badge { border-color: var(--bold-azul); }
         
@@ -157,7 +105,7 @@
 
     <div class="page-header">
         <img src="https://bold-process-automation.github.io/assets-project-graphic-design/bold-logo-palabra-azul.png" alt="Logo Bold">
-        <h1>Roadmap de Productos 2026</h1>
+        <h1>Roadmap Process Automation Team</h1>
     </div>
 
     <div class="controls-header">
@@ -180,30 +128,52 @@
 
     <div class="timeline-wrapper">
         <div class="timeline-scroll-area">
+            
+            <div class="quarters-header" id="quarters-header"></div>
             <div class="months-header" id="months-header"></div>
             <div class="weeks-header" id="weeks-header"></div>
             <div class="grid-lines" id="grid-lines"></div>
+            
             <div class="projects-area" id="projects-container"></div>
+
             <div id="today-marker" class="today-line" style="display: none;">
                 <div class="today-label">Hoy</div>
             </div>
+
         </div>
     </div>
 
     <script>
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
+        // --- AHORA CUBRE TODO EL AÑO (Enero a Diciembre) ---
         const windowStart = new Date('2026-01-01T00:00:00');
-        const windowEnd = new Date('2026-06-30T23:59:59');
+        const windowEnd = new Date('2026-12-31T23:59:59');
         const totalDays = (windowEnd - windowStart) / (1000 * 60 * 60 * 24);
 
         let currentTab = 'automation ia'; 
         let data = []; 
 
         function renderCalendarHeaders() {
-            const monthsNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"];
-            const daysInMonths = [31, 28, 31, 30, 31, 30]; 
+            const monthsNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
             
+            // Renderizar Quarters
+            const quarters = [
+                { name: 'Q1', days: 31 + 28 + 31 },
+                { name: 'Q2', days: 30 + 31 + 30 },
+                { name: 'Q3', days: 31 + 31 + 30 },
+                { name: 'Q4', days: 31 + 30 + 31 }
+            ];
+
+            let htmlQuarters = '';
+            quarters.forEach(q => {
+                const qWidth = (q.days / totalDays) * 100;
+                htmlQuarters += `<div class="quarter" style="width: ${qWidth}%;">${q.name}</div>`;
+            });
+            document.getElementById('quarters-header').innerHTML = htmlQuarters;
+
+            // Renderizar Meses, Semanas y Cuadrícula dinámica
             let htmlMonths = '';
             let htmlWeeks = '';
             let htmlGrid = '';
@@ -212,11 +182,18 @@
                 const monthWidthPct = (days / totalDays) * 100;
                 htmlMonths += `<div class="month" style="width: ${monthWidthPct}%;">${monthsNames[i]}</div>`;
                 
+                // Contenedor del mes para la cuadrícula (para la línea oscura separadora)
+                htmlGrid += `<div class="grid-month-container" style="width: ${monthWidthPct}%;">`;
+
                 for(let w = 1; w <= 4; w++) {
                     const weekWidthPct = monthWidthPct / 4;
                     htmlWeeks += `<div class="week" style="width: ${weekWidthPct}%;">Semana ${w}</div>`;
-                    htmlGrid += `<div class="grid-line" style="width: ${weekWidthPct}%;"></div>`;
+                    
+                    // Divisiones de semana dentro del mes (líneas punteadas)
+                    htmlGrid += `<div class="grid-week"></div>`;
                 }
+                
+                htmlGrid += `</div>`; // Cierra grid-month-container
             });
 
             document.getElementById('months-header').innerHTML = htmlMonths;
@@ -284,10 +261,10 @@
                 if (leftPos === null || rightPos === null) return;
                 
                 let width = rightPos - leftPos;
-                if (width < 1.5) width = 1.5; 
+                if (width < 0.5) width = 0.5; 
 
                 let currentRow = 0;
-                while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (leftPos - 0.8)) {
+                while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (leftPos - 0.4)) {
                     currentRow++;
                 }
                 rowEndPositions[currentRow] = rightPos;
@@ -297,7 +274,6 @@
                     bar.className = 'project-bar';
                     
                     const areaKey = normalizeText(project['Área']);
-                    // Le añadimos un atributo de datos para identificar el área en CSS
                     bar.setAttribute('data-area', areaKey);
                     
                     const displayLeft = Math.max(0, leftPos);

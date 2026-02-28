@@ -24,12 +24,20 @@
             --text-main: var(--bold-azul);
             --border-color: var(--bold-gris-oscuro);
             
-            /* Colores de áreas adaptados a la marca */
-            --area-logistica: var(--bold-coral);
-            --area-marketing: var(--bold-azul-vibrante);
-            --area-smb: #007b5e; /* Mantenemos un verde para contraste, puedes cambiarlo */
-            --area-human-ops: var(--bold-azul);
-            /* Degradado oficial como default */
+            /* =========================================
+               NUEVOS COLORES DE ÁREAS 
+               ========================================= */
+            --area-risk: #052d65;
+            --area-financial: #c31a2f;
+            --area-sales: #692e60;
+            --area-human-talent: #1b8959;
+            --area-legal: #ffc217;
+            --area-cs: #0b3b26;
+            --area-logistica: #121f6c;
+            --area-hubs: var(--bold-coral); /* Rojo oficial Bold */
+            --area-marketing: #0097a7;
+            
+            /* Degradado oficial como default por si agregas un área nueva y olvidas ponerle color */
             --area-default: linear-gradient(135deg, #d00030 0%, #00308f 100%); 
             
             --status-dev: #000;
@@ -38,7 +46,6 @@
             --status-piloto: #4a90e2;
         }
 
-        /* Tipografía Base */
         body { 
             font-family: 'Montserrat', sans-serif; 
             font-weight: 400;
@@ -48,7 +55,6 @@
             padding: 20px; 
         }
 
-        /* Cabecera con Logo */
         .page-header {
             display: flex;
             align-items: center;
@@ -60,7 +66,6 @@
 
         .controls-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--bold-gris-claro); padding-bottom: 15px; margin-bottom: 20px; }
         
-        /* Botones */
         .tabs { display: flex; gap: 10px; }
         .tab { 
             font-family: 'Montserrat', sans-serif;
@@ -113,6 +118,11 @@
             box-sizing: border-box;
         }
 
+        /* Regla especial para "Legal" (Amarillo) para que el texto sea oscuro y se pueda leer */
+        .project-bar[data-area="legal"] {
+            color: var(--bold-azul);
+        }
+
         .project-bar:hover {
             filter: brightness(1.1);
             z-index: 100;
@@ -132,7 +142,11 @@
 
         .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
         .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
+        /* Color oscuro para el badge de Legal */
+        .project-bar[data-area="legal"] .badge { background: rgba(0,0,0,0.1); }
+
         .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.3);}
+        .project-bar[data-area="legal"] .status-badge { border-color: var(--bold-azul); }
         
         .today-line { position: absolute; top: 0; bottom: -50px; width: 2px; background-color: var(--bold-coral); z-index: 10; pointer-events: none;}
         .today-label { position: absolute; top: -24px; left: -15px; background: var(--bold-coral); color: white; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
@@ -166,23 +180,17 @@
 
     <div class="timeline-wrapper">
         <div class="timeline-scroll-area">
-            
             <div class="months-header" id="months-header"></div>
             <div class="weeks-header" id="weeks-header"></div>
-            
             <div class="grid-lines" id="grid-lines"></div>
-            
             <div class="projects-area" id="projects-container"></div>
-
             <div id="today-marker" class="today-line" style="display: none;">
                 <div class="today-label">Hoy</div>
             </div>
-
         </div>
     </div>
 
     <script>
-        // Tu URL de Apps Script intacta
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
         const windowStart = new Date('2026-01-01T00:00:00');
@@ -288,6 +296,10 @@
                     const bar = document.createElement('div');
                     bar.className = 'project-bar';
                     
+                    const areaKey = normalizeText(project['Área']);
+                    // Le añadimos un atributo de datos para identificar el área en CSS
+                    bar.setAttribute('data-area', areaKey);
+                    
                     const displayLeft = Math.max(0, leftPos);
                     const displayWidth = width - (displayLeft - leftPos);
                     const finalWidth = Math.min(displayWidth, 100 - displayLeft);
@@ -296,9 +308,6 @@
                     bar.style.width = `${finalWidth}%`;
                     bar.style.top = `${currentRow * 42}px`; 
                     
-                    const areaKey = normalizeText(project['Área']);
-                    
-                    // Asignación de color: Si es 'default', aplica el degradado corporativo
                     if (areaKey === 'default') {
                         bar.style.background = `var(--area-default)`;
                     } else {

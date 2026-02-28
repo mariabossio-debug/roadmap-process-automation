@@ -12,7 +12,6 @@
 
     <style>
         :root {
-            /* Paleta Oficial Bold */
             --bold-coral: #FF2847;
             --bold-azul: #121E6C;
             --bold-azul-vibrante: #080EFF;
@@ -25,7 +24,6 @@
             --text-main: var(--bold-azul);
             --border-color: var(--bold-gris-oscuro);
             
-            /* Colores de Áreas */
             --area-risk: #052d65;
             --area-financial: #c31a2f;
             --area-sales: #692e60;
@@ -50,14 +48,12 @@
         .page-header img { height: 40px; }
         .page-header h1 { font-weight: 700; font-size: 24px; margin: 0; color: var(--bold-azul); }
 
-        .controls-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        /* Controles alineados a la izquierda sin el filtro */
+        .controls-header { display: flex; align-items: center; margin-bottom: 15px; }
         
         .tabs { display: flex; gap: 10px; }
         .tab { font-family: 'Montserrat', sans-serif; font-weight: 400; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.3s ease; }
         .tab.active { background: var(--bold-coral); color: #fff; font-weight: 600; box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2); }
-        
-        .filters label { font-weight: 600; font-size: 14px; margin-right: 10px;}
-        .filters select { font-family: 'Montserrat', sans-serif; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--bold-gris-oscuro); color: var(--bold-azul); outline: none;}
 
         .legend-container { display: flex; flex-wrap: wrap; align-items: center; gap: 15px; margin-bottom: 20px; padding: 12px 15px; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .legend-title { font-weight: 700; font-size: 13px; margin-right: 5px; color: var(--bold-azul); }
@@ -142,18 +138,7 @@
             <button class="tab active" onclick="switchTab('Automation IA')">Automation IA</button>
             <button class="tab" onclick="switchTab('Appian')">Appian</button>
         </div>
-
-        <div class="filters">
-            <label>Filtrar por Q: </label>
-            <select id="q-filter" onchange="renderProjects()">
-                <option value="all">Todos los Q</option>
-                <option value="Q1">Quarter 1</option>
-                <option value="Q2">Quarter 2</option>
-                <option value="Q3">Quarter 3</option>
-                <option value="Q4">Quarter 4</option>
-            </select>
         </div>
-    </div>
 
     <div class="legend-container">
         <span class="legend-title">Convenciones de Áreas:</span>
@@ -264,26 +249,14 @@
 
         function renderProjects() {
             const container = document.getElementById('projects-container');
-            const qFilter = document.getElementById('q-filter').value;
             container.innerHTML = ''; 
 
             if (!data || data.length === 0) return;
 
-            // 1. Filtro por equipo (pestaña)
             let filteredData = data.filter(p => {
                 if (!p.Equipo) return false;
                 return p.Equipo.toString().toLowerCase().trim() === currentTab;
             });
-
-            // 2. Filtro ROBUSTO por Quarter
-            if (qFilter !== 'all') {
-                filteredData = filteredData.filter(p => {
-                    const qValue = p['Q']; // Lee directo de tu columna Q
-                    if (!qValue) return false;
-                    // Remueve espacios y pone en mayúscula para evitar errores humanos en Sheets
-                    return qValue.toString().trim().toUpperCase() === qFilter.toUpperCase();
-                });
-            }
 
             filteredData.sort((a, b) => {
                 const dateA = new Date((a['Fecha de Inicio'] || '').toString().split('T')[0]);
@@ -339,7 +312,6 @@
 
                     const actualWidthPx = bar.offsetWidth;
                     const actualWidthPct = (actualWidthPx / containerWidth) * 100;
-
                     const visualRightPos = displayLeft + Math.max(finalWidth, actualWidthPct);
 
                     let currentRow = 0;
@@ -348,43 +320,35 @@
                     }
                     
                     rowEndPositions[currentRow] = visualRightPos;
-
                     bar.style.top = `${currentRow * 42}px`; 
                 }
             });
             
             container.style.height = `${rowEndPositions.length * 42 + 60}px`;
 
-            // AUTO-SCROLL MÁGICO
+            // SCROLL AUTOMÁTICO A LA FECHA DE HOY
             setTimeout(() => {
                 const wrapper = document.querySelector('.timeline-wrapper');
                 const scrollArea = document.querySelector('.timeline-scroll-area');
                 if (!wrapper || !scrollArea) return;
                 
                 const scrollWidth = scrollArea.offsetWidth;
-                let targetLeft = 0;
-
-                // Calculamos en qué porcentaje del año empieza cada Q
-                if (qFilter === 'Q2') targetLeft = (90 / 365) * scrollWidth; // Empieza Abril
-                else if (qFilter === 'Q3') targetLeft = (181 / 365) * scrollWidth; // Empieza Julio
-                else if (qFilter === 'Q4') targetLeft = (273 / 365) * scrollWidth; // Empieza Octubre
-                else if (qFilter === 'all') {
-                    // Si elige "Todos", lo centramos amablemente en la fecha de Hoy
-                    const today = new Date();
-                    const daysPassed = (today - windowStart) / (1000 * 60 * 60 * 24);
-                    const todayPosition = (daysPassed / 365) * scrollWidth;
-                    targetLeft = Math.max(0, todayPosition - 400); // 400px de margen para no dejar el "hoy" contra la pared
-                }
+                const today = new Date();
+                const daysPassed = (today - windowStart) / (1000 * 60 * 60 * 24);
+                
+                // Calculamos dónde está la línea de hoy y restamos unos píxeles (400) 
+                // para que quede en el centro de la pantalla y no pegada a la izquierda
+                const todayPosition = (daysPassed / 365) * scrollWidth;
+                const targetLeft = Math.max(0, todayPosition - 400); 
 
                 wrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
-            }, 50);
+            }, 100);
         }
 
         function switchTab(team) {
             currentTab = team.toLowerCase().trim(); 
             document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            document.getElementById('q-filter').value = 'all'; 
             renderProjects();
         }
 

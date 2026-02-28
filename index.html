@@ -6,7 +6,6 @@
     <title>Roadmap Process Automation Team</title>
     
     <link rel="icon" type="image/png" href="https://bold-process-automation.github.io/assets-project-graphic-design/bold-logo-palabra-azul.png">
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
@@ -20,7 +19,7 @@
             --bold-blanco: #F7F8FB;
             --bold-gris-oscuro: #CCCCCC;
             --bold-gris-claro: #F2F2F2;
-            --bold-gris-lineas: #A0AABF; /* Color para divisiones de mes */
+            --bold-gris-lineas: #A0AABF; 
             
             --bg-page: var(--bold-blanco);
             --text-main: var(--bold-azul);
@@ -51,7 +50,7 @@
         .page-header img { height: 40px; }
         .page-header h1 { font-weight: 700; font-size: 24px; margin: 0; color: var(--bold-azul); }
 
-        .controls-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--bold-gris-claro); padding-bottom: 15px; margin-bottom: 20px; }
+        .controls-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         
         .tabs { display: flex; gap: 10px; }
         .tab { font-family: 'Montserrat', sans-serif; font-weight: 400; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.3s ease; }
@@ -60,44 +59,65 @@
         .filters label { font-weight: 600; font-size: 14px; margin-right: 10px;}
         .filters select { font-family: 'Montserrat', sans-serif; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--bold-gris-oscuro); color: var(--bold-azul); outline: none;}
 
-        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; overflow-x: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
-        
-        /* Modificado para soportar 12 meses sin apretarse (3200px de ancho mínimo) */
-        .timeline-scroll-area { min-width: 3200px; position: relative; }
+        /* Leyenda de Convenciones */
+        .legend-container { display: flex; flex-wrap: wrap; align-items: center; gap: 15px; margin-bottom: 20px; padding: 12px 15px; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .legend-title { font-weight: 700; font-size: 13px; margin-right: 5px; color: var(--bold-azul); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #555;}
+        .legend-color { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
 
-        /* Cabecera de Quarters */
+        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
+        
+        .timeline-scroll-area { min-width: 3200px; position: relative; display: flex; flex-direction: column;}
+
         .quarters-header { display: flex; border-bottom: 2px solid #fff; background: var(--bold-coral); color: white; border-radius: 8px 8px 0 0;}
         .quarter { text-align: center; font-weight: 700; font-size: 14px; padding: 6px 0; border-right: 2px solid rgba(255,255,255,0.4); box-sizing: border-box; }
         .quarter:last-child { border-right: none; }
 
-        /* Cabecera de Meses y Semanas */
         .months-header { display: flex; border-bottom: 3px solid var(--bold-coral); background: var(--bold-azul); color: white; }
         .month { text-align: center; font-weight: 600; padding: 10px 0; border-right: 2px solid rgba(255,255,255,0.3); box-sizing: border-box; }
         
         .weeks-header { display: flex; border-bottom: 1px solid var(--border-color); background: var(--bold-gris-claro); }
         .week { text-align: center; font-size: 11px; padding: 6px 0; font-weight: 600; color: var(--bold-azul); border-right: 1px dashed var(--bold-gris-oscuro); box-sizing: border-box; }
 
-        /* Líneas de Grid (Diferencia clara entre Meses y Semanas) */
-        .grid-lines { position: absolute; top: 105px; bottom: 0; left: 0; right: 0; display: flex; z-index: 0; pointer-events: none; }
+        .grid-lines { position: absolute; top: 85px; bottom: 0; left: 0; right: 0; display: flex; z-index: 0; pointer-events: none; }
         .grid-month-container { display: flex; border-right: 2px solid var(--bold-gris-lineas); box-sizing: border-box; height: 100%;}
         .grid-week { flex: 1; border-right: 1px dashed var(--bold-gris-claro); box-sizing: border-box; height: 100%; }
         .grid-month-container .grid-week:last-child { border-right: none; }
 
-        .projects-area { position: relative; margin-top: 25px; min-height: 300px; z-index: 1; }
+        .projects-area { position: relative; margin-top: 25px; padding-bottom: 40px; min-height: 300px; z-index: 1; }
 
-        .project-bar { position: absolute; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 14px; color: white; font-size: 12px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.15); transition: all 0.2s ease; box-sizing: border-box; }
+        .project-bar { 
+            position: absolute; 
+            height: 32px; 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 10px 0 14px; 
+            color: white; 
+            font-size: 12px; 
+            font-weight: 600; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
+            transition: all 0.2s ease; 
+            box-sizing: border-box; 
+            gap: 10px;
+            /* MAGIA: Fuerza a la caja a ser al menos tan ancha como su texto */
+            min-width: max-content; 
+        }
+        
         .project-bar[data-area="legal"] { color: var(--bold-azul); }
-        .project-bar:hover { filter: brightness(1.1); z-index: 100; transform: scale(1.01); box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: default; }
+        .project-bar:hover { filter: brightness(1.1); z-index: 100; transform: scale(1.02); box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: default; }
 
-        .project-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; flex-grow: 1; margin-right: 8px; }
+        .project-title { white-space: nowrap; }
         .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
         .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
         .project-bar[data-area="legal"] .badge { background: rgba(0,0,0,0.1); }
         .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.3);}
         .project-bar[data-area="legal"] .status-badge { border-color: var(--bold-azul); }
         
-        .today-line { position: absolute; top: 0; bottom: -50px; width: 2px; background-color: var(--bold-coral); z-index: 10; pointer-events: none;}
-        .today-label { position: absolute; top: -24px; left: -15px; background: var(--bold-coral); color: white; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        /* MAGIA: Línea de Hoy reestructurada para ser infinita */
+        .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background-color: var(--bold-coral); z-index: 20; pointer-events: none;}
+        .today-label { position: absolute; top: 0; left: -16px; background: var(--bold-coral); color: white; padding: 4px 10px; border-radius: 0 0 6px 6px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
         
     </style>
 </head>
@@ -126,6 +146,19 @@
         </div>
     </div>
 
+    <div class="legend-container">
+        <span class="legend-title">Convenciones de Áreas:</span>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-risk)"></span>Risk</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-financial)"></span>Financial</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-sales)"></span>Sales</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-human-talent)"></span>Human Talent</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-legal)"></span>Legal</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-cs)"></span>CS</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-logistica)"></span>Logística</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-hubs)"></span>Hubs</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--area-marketing)"></span>Marketing</div>
+    </div>
+
     <div class="timeline-wrapper">
         <div class="timeline-scroll-area">
             
@@ -146,7 +179,6 @@
     <script>
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
-        // --- AHORA CUBRE TODO EL AÑO (Enero a Diciembre) ---
         const windowStart = new Date('2026-01-01T00:00:00');
         const windowEnd = new Date('2026-12-31T23:59:59');
         const totalDays = (windowEnd - windowStart) / (1000 * 60 * 60 * 24);
@@ -158,7 +190,6 @@
             const monthsNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
             const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
             
-            // Renderizar Quarters
             const quarters = [
                 { name: 'Q1', days: 31 + 28 + 31 },
                 { name: 'Q2', days: 30 + 31 + 30 },
@@ -173,7 +204,6 @@
             });
             document.getElementById('quarters-header').innerHTML = htmlQuarters;
 
-            // Renderizar Meses, Semanas y Cuadrícula dinámica
             let htmlMonths = '';
             let htmlWeeks = '';
             let htmlGrid = '';
@@ -181,19 +211,14 @@
             daysInMonths.forEach((days, i) => {
                 const monthWidthPct = (days / totalDays) * 100;
                 htmlMonths += `<div class="month" style="width: ${monthWidthPct}%;">${monthsNames[i]}</div>`;
-                
-                // Contenedor del mes para la cuadrícula (para la línea oscura separadora)
                 htmlGrid += `<div class="grid-month-container" style="width: ${monthWidthPct}%;">`;
 
                 for(let w = 1; w <= 4; w++) {
                     const weekWidthPct = monthWidthPct / 4;
                     htmlWeeks += `<div class="week" style="width: ${weekWidthPct}%;">Semana ${w}</div>`;
-                    
-                    // Divisiones de semana dentro del mes (líneas punteadas)
                     htmlGrid += `<div class="grid-week"></div>`;
                 }
-                
-                htmlGrid += `</div>`; // Cierra grid-month-container
+                htmlGrid += `</div>`; 
             });
 
             document.getElementById('months-header').innerHTML = htmlMonths;
@@ -219,12 +244,10 @@
             const formattedToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const todayPercentage = getTimelinePosition(formattedToday);
             const todayMarker = document.getElementById('today-marker');
-            const projectsArea = document.getElementById('projects-container');
             
             if (todayPercentage >= 0 && todayPercentage <= 100) {
                 todayMarker.style.left = `${todayPercentage}%`;
                 todayMarker.style.display = 'block';
-                setTimeout(() => { todayMarker.style.bottom = `-${projectsArea.offsetHeight}px`; }, 100);
             } else {
                 todayMarker.style.display = 'none';
             }
@@ -261,13 +284,16 @@
                 if (leftPos === null || rightPos === null) return;
                 
                 let width = rightPos - leftPos;
-                if (width < 0.5) width = 0.5; 
+                
+                // MAGIA: Simulamos que todo proyecto tiene al menos un 5.5% de ancho para el algoritmo
+                // Así nos aseguramos de que el sistema reserva espacio para el nombre estirado y no lo empalma con otro
+                let effectiveRightPos = rightPos > (leftPos + 5.5) ? rightPos : (leftPos + 5.5);
 
                 let currentRow = 0;
                 while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (leftPos - 0.4)) {
                     currentRow++;
                 }
-                rowEndPositions[currentRow] = rightPos;
+                rowEndPositions[currentRow] = effectiveRightPos;
 
                 if (rightPos > 0 && leftPos < 100) {
                     const bar = document.createElement('div');
@@ -307,7 +333,6 @@
             });
             
             container.style.height = `${rowEndPositions.length * 42 + 20}px`;
-            renderTodayLine(); 
         }
 
         function switchTab(team) {
@@ -324,6 +349,7 @@
                 const response = await fetch(sheetApiUrl);
                 data = await response.json();
                 renderProjects();
+                renderTodayLine(); // Se ejecuta después para cubrir bien el alto generado
             } catch (error) {
                 console.error("Error cargando los datos", error);
             }

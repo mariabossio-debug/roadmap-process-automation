@@ -100,7 +100,6 @@
             transition: transform 0.2s ease, filter 0.2s ease; 
             box-sizing: border-box; 
             gap: 10px;
-            /* Se asegura de que la caja no corte el texto */
             min-width: max-content; 
         }
         
@@ -114,8 +113,21 @@
         .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.3);}
         .project-bar[data-area="legal"] .status-badge { border-color: var(--bold-azul); }
         
+        /* Línea de Hoy con diseño actualizado */
         .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background-color: var(--bold-coral); z-index: 20; pointer-events: none;}
-        .today-label { position: absolute; top: 0; left: -16px; background: var(--bold-coral); color: white; padding: 4px 10px; border-radius: 0 0 6px 6px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        .today-label { 
+            position: absolute; 
+            bottom: 12px; /* Se sitúa flotando justo al fondo */
+            left: 50%; /* Inicia en el centro exacto de la línea */
+            transform: translateX(-50%); /* Se auto-centra matemáticamente */
+            background: var(--bold-coral); 
+            color: white; 
+            padding: 5px 16px; 
+            border-radius: 12px; /* Redondita como en tu imagen de referencia */
+            font-size: 11px; 
+            font-weight: 700; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
         
     </style>
 </head>
@@ -275,7 +287,6 @@
 
             const rowEndPositions = [];
             
-            // Medimos el contenedor para poder hacer cálculos en píxeles reales vs porcentajes
             const containerWidth = container.offsetWidth || 3200; 
 
             filteredData.forEach(project => {
@@ -287,7 +298,6 @@
                 let width = rightPos - leftPos;
                 
                 if (rightPos > 0 && leftPos < 100) {
-                    // 1. PRIMERO creamos e inyectamos la cajita para que el navegador nos diga cuánto mide realmente con texto
                     const bar = document.createElement('div');
                     bar.className = 'project-bar';
                     
@@ -320,32 +330,26 @@
                         </div>
                     `;
                     
-                    container.appendChild(bar); // Lo metemos al HTML temporalmente sin ubicarlo en Y
+                    container.appendChild(bar);
 
-                    // 2. AHORA le preguntamos al navegador: ¿Cuánto espacio real usaste?
                     const actualWidthPx = bar.offsetWidth;
                     const actualWidthPct = (actualWidthPx / containerWidth) * 100;
 
-                    // 3. Calculamos la posición derecha REAL visual (el mayor entre su fecha o lo que se estiró)
                     const visualRightPos = displayLeft + Math.max(finalWidth, actualWidthPct);
 
-                    // 4. ALGORITMO ANTI-CHOQUES MEJORADO
                     let currentRow = 0;
-                    // Comprobamos usando la posición visual real, dejando un margen de 0.8% entre cajas
                     while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.8)) {
                         currentRow++;
                     }
                     
-                    // Registramos que toda esta porción de la fila está ocupada
                     rowEndPositions[currentRow] = visualRightPos;
 
-                    // 5. Finalmente, lo movemos a la fila correcta
                     bar.style.top = `${currentRow * 42}px`; 
                 }
             });
             
-            // Ajustamos el alto del fondo para que quepan todas las filas generadas
-            container.style.height = `${rowEndPositions.length * 42 + 20}px`;
+            // Le damos 60px de respiro al final para que quepa perfecto el circulito de "Hoy"
+            container.style.height = `${rowEndPositions.length * 42 + 60}px`;
         }
 
         function switchTab(team) {
@@ -362,7 +366,7 @@
                 const response = await fetch(sheetApiUrl);
                 data = await response.json();
                 renderProjects();
-                renderTodayLine(); // Se llama de último para que cruce correctamente el alto ajustado
+                renderTodayLine(); 
             } catch (error) {
                 console.error("Error cargando los datos", error);
             }

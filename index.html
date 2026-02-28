@@ -59,7 +59,6 @@
         .filters label { font-weight: 600; font-size: 14px; margin-right: 10px;}
         .filters select { font-family: 'Montserrat', sans-serif; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--bold-gris-oscuro); color: var(--bold-azul); outline: none;}
 
-        /* Leyenda de Convenciones */
         .legend-container { display: flex; flex-wrap: wrap; align-items: center; gap: 15px; margin-bottom: 20px; padding: 12px 15px; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .legend-title { font-weight: 700; font-size: 13px; margin-right: 5px; color: var(--bold-azul); }
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #555;}
@@ -98,10 +97,10 @@
             font-size: 12px; 
             font-weight: 600; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
-            transition: all 0.2s ease; 
+            transition: transform 0.2s ease, filter 0.2s ease; 
             box-sizing: border-box; 
             gap: 10px;
-            /* MAGIA: Fuerza a la caja a ser al menos tan ancha como su texto */
+            /* Se asegura de que la caja no corte el texto */
             min-width: max-content; 
         }
         
@@ -115,7 +114,6 @@
         .status-badge { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; background-color: #ccc; box-shadow: 0 1px 3px rgba(0,0,0,0.3);}
         .project-bar[data-area="legal"] .status-badge { border-color: var(--bold-azul); }
         
-        /* MAGIA: Línea de Hoy reestructurada para ser infinita */
         .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background-color: var(--bold-coral); z-index: 20; pointer-events: none;}
         .today-label { position: absolute; top: 0; left: -16px; background: var(--bold-coral); color: white; padding: 4px 10px; border-radius: 0 0 6px 6px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
         
@@ -276,6 +274,9 @@
             });
 
             const rowEndPositions = [];
+            
+            // Medimos el contenedor para poder hacer cálculos en píxeles reales vs porcentajes
+            const containerWidth = container.offsetWidth || 3200; 
 
             filteredData.forEach(project => {
                 const leftPos = getTimelinePosition(project['Fecha de Inicio']);
@@ -285,17 +286,8 @@
                 
                 let width = rightPos - leftPos;
                 
-                // MAGIA: Simulamos que todo proyecto tiene al menos un 5.5% de ancho para el algoritmo
-                // Así nos aseguramos de que el sistema reserva espacio para el nombre estirado y no lo empalma con otro
-                let effectiveRightPos = rightPos > (leftPos + 5.5) ? rightPos : (leftPos + 5.5);
-
-                let currentRow = 0;
-                while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (leftPos - 0.4)) {
-                    currentRow++;
-                }
-                rowEndPositions[currentRow] = effectiveRightPos;
-
                 if (rightPos > 0 && leftPos < 100) {
+                    // 1. PRIMERO creamos e inyectamos la cajita para que el navegador nos diga cuánto mide realmente con texto
                     const bar = document.createElement('div');
                     bar.className = 'project-bar';
                     
@@ -308,7 +300,6 @@
 
                     bar.style.left = `${displayLeft}%`;
                     bar.style.width = `${finalWidth}%`;
-                    bar.style.top = `${currentRow * 42}px`; 
                     
                     if (areaKey === 'default') {
                         bar.style.background = `var(--area-default)`;
@@ -328,10 +319,32 @@
                             <span class="status-badge" style="background-color: ${statusColor}" title="Estado: ${project['Estado']}"></span>
                         </div>
                     `;
-                    container.appendChild(bar);
+                    
+                    container.appendChild(bar); // Lo metemos al HTML temporalmente sin ubicarlo en Y
+
+                    // 2. AHORA le preguntamos al navegador: ¿Cuánto espacio real usaste?
+                    const actualWidthPx = bar.offsetWidth;
+                    const actualWidthPct = (actualWidthPx / containerWidth) * 100;
+
+                    // 3. Calculamos la posición derecha REAL visual (el mayor entre su fecha o lo que se estiró)
+                    const visualRightPos = displayLeft + Math.max(finalWidth, actualWidthPct);
+
+                    // 4. ALGORITMO ANTI-CHOQUES MEJORADO
+                    let currentRow = 0;
+                    // Comprobamos usando la posición visual real, dejando un margen de 0.8% entre cajas
+                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.8)) {
+                        currentRow++;
+                    }
+                    
+                    // Registramos que toda esta porción de la fila está ocupada
+                    rowEndPositions[currentRow] = visualRightPos;
+
+                    // 5. Finalmente, lo movemos a la fila correcta
+                    bar.style.top = `${currentRow * 42}px`; 
                 }
             });
             
+            // Ajustamos el alto del fondo para que quepan todas las filas generadas
             container.style.height = `${rowEndPositions.length * 42 + 20}px`;
         }
 
@@ -349,7 +362,7 @@
                 const response = await fetch(sheetApiUrl);
                 data = await response.json();
                 renderProjects();
-                renderTodayLine(); // Se ejecuta después para cubrir bien el alto generado
+                renderTodayLine(); // Se llama de último para que cruce correctamente el alto ajustado
             } catch (error) {
                 console.error("Error cargando los datos", error);
             }

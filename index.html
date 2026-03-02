@@ -59,7 +59,7 @@
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #555;}
         .legend-color { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
 
-        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
+        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; overflow-y: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
         
         .timeline-scroll-area { min-width: 3200px; position: relative; display: flex; flex-direction: column;}
 
@@ -172,9 +172,10 @@
     <script>
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
-        const windowStart = new Date('2026-01-01T00:00:00');
-        const windowEnd = new Date('2026-12-31T23:59:59');
-        const totalDays = (windowEnd - windowStart) / (1000 * 60 * 60 * 24);
+        // Ventana estricta del año 2026
+        const wStart = new Date(2026, 0, 1, 0, 0, 0);
+        const wEnd = new Date(2026, 11, 31, 23, 59, 59);
+        const totalDays = (wEnd - wStart) / (1000 * 60 * 60 * 24);
 
         let currentTab = 'automation ia'; 
         let data = []; 
@@ -224,11 +225,22 @@
             return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
         }
 
-        function getTimelinePosition(dateValue) {
+        // NUEVO PARSEADOR DE FECHAS ESTRICTO A PRUEBA DE ZONAS HORARIAS
+        function parseDateSafe(dateValue) {
             if (!dateValue) return null;
-            let cleanDate = dateValue.toString().split('T')[0];
-            const date = new Date(cleanDate + 'T00:00:00'); 
-            const daysFromStart = (date - windowStart) / (1000 * 60 * 60 * 24);
+            // Extrae estrictamente la fecha YYYY-MM-DD sin importar lo que traiga el string
+            const match = dateValue.toString().match(/(\d{4})-(\d{2})-(\d{2})/);
+            if(match) {
+               // Configuramos la fecha al MEDIODÍA local. Así no salta al día anterior nunca.
+               return new Date(match[1], match[2] - 1, match[3], 12, 0, 0);
+            }
+            return new Date(dateValue);
+        }
+
+        function getTimelinePosition(dateValue) {
+            const date = parseDateSafe(dateValue);
+            if (!date) return null;
+            const daysFromStart = (date - wStart) / (1000 * 60 * 60 * 24);
             return (daysFromStart / totalDays) * 100; 
         }
 
@@ -258,35 +270,27 @@
             });
 
             // ==============================================================
-            // NUEVO ALGORITMO DE ORDENAMIENTO (3 NIVELES PARA CASCADA PERFECTA)
+            // ORDEN ESTRICTO DE CASCADA (1: Fecha, 2: Área, 3: Duración)
             // ==============================================================
             filteredData.sort((a, b) => {
-                const parseDate = (d) => {
-                    if(!d) return 0;
-                    return new Date(d.toString().split('T')[0] + 'T00:00:00').getTime() || 0;
-                };
+                const dateA = parseDateSafe(a['Fecha de Inicio'])?.getTime() || 0;
+                const dateB = parseDateSafe(b['Fecha de Inicio'])?.getTime() || 0;
 
-                const dateA = parseDate(a['Fecha de Inicio']);
-                const dateB = parseDate(b['Fecha de Inicio']);
-
-                // Nivel 1: Por Fecha de Inicio (El motor de la cascada cronológica)
+                // 1. Cronológico estricto (los más viejos van primero/arriba)
                 if (dateA !== dateB) return dateA - dateB;
 
-                // Nivel 2: Por Área (Agrupa los proyectos del mismo color si inician el mismo día)
+                // 2. Si inician el mismo día, agrupar por color (Área)
                 const areaA = normalizeText(a['Área']);
                 const areaB = normalizeText(b['Área']);
                 if (areaA !== areaB) return areaA.localeCompare(areaB);
 
-                // Nivel 3: Por Fecha de Fin (Para que el más largo de un grupo de color quede arriba)
-                const endA = parseDate(a['Fecha de Fin']);
-                const endB = parseDate(b['Fecha de Fin']);
+                // 3. El más largo queda de base
+                const endA = parseDateSafe(a['Fecha de Fin'])?.getTime() || 0;
+                const endB = parseDateSafe(b['Fecha de Fin'])?.getTime() || 0;
                 return endB - endA; 
             });
 
-            const rowEndPositions = [];
-            const containerWidth = container.offsetWidth || 3200; 
-
-            filteredData.forEach(project => {
+            filteredData.forEach((project, index) => {
                 const leftPos = getTimelinePosition(project['Fecha de Inicio']);
                 const rightPos = getTimelinePosition(project['Fecha de Fin']);
                 
@@ -329,21 +333,17 @@
                     
                     container.appendChild(bar);
 
-                    const actualWidthPx = bar.offsetWidth;
-                    const actualWidthPct = (actualWidthPx / containerWidth) * 100;
-                    const visualRightPos = displayLeft + Math.max(finalWidth, actualWidthPct);
-
-                    let currentRow = 0;
-                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.8)) {
-                        currentRow++;
-                    }
-                    
-                    rowEndPositions[currentRow] = visualRightPos;
+                    // ==============================================================
+                    // LA CASCADA: Cada proyecto tiene su propia fila única secuencial
+                    // Cero amontonamientos.
+                    // ==============================================================
+                    let currentRow = index; 
                     bar.style.top = `${currentRow * 42}px`; 
                 }
             });
             
-            container.style.height = `${rowEndPositions.length * 42 + 60}px`;
+            // Ajustamos la altura final del calendario
+            container.style.height = `${filteredData.length * 42 + 60}px`;
 
             setTimeout(() => {
                 const wrapper = document.querySelector('.timeline-wrapper');
@@ -352,7 +352,7 @@
                 
                 const scrollWidth = scrollArea.offsetWidth;
                 const today = new Date();
-                const daysPassed = (today - windowStart) / (1000 * 60 * 60 * 24);
+                const daysPassed = (today - wStart) / (1000 * 60 * 60 * 24);
                 
                 const todayPosition = (daysPassed / 365) * scrollWidth;
                 const targetLeft = Math.max(0, todayPosition - 400); 

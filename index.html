@@ -44,10 +44,9 @@
 
         body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color: var(--bg-page); color: var(--text-main); margin: 0; padding: 0; }
 
-        /* EL CABEZAL AHORA ES MÁS ALTO PARA ACOMODAR EL TEXTO GRANDE */
         .top-header {
             width: 100%;
-            height: 160px; /* Aumentado de 140px a 160px */
+            height: 160px; 
             background-image: url('header.png');
             background-size: cover;
             background-position: center;
@@ -58,15 +57,14 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* TEXTO Y LOGO MUCHO MÁS GRANDES */
-        .page-header { display: flex; align-items: center; gap: 30px; /* Más espacio entre logo y texto */ }
-        .page-header img { height: 75px; } /* Logo gigante (antes 40px) */
+        .page-header { display: flex; align-items: center; gap: 30px; }
+        .page-header img { height: 75px; } 
         .page-header h1 { 
             font-weight: 700; 
-            font-size: 38px; /* Título gigante (antes 26px) */
+            font-size: 38px; 
             margin: 0; 
             color: #FFFFFF; 
-            text-shadow: 0 2px 6px rgba(0,0,0,0.5); /* Sombra un poco más pronunciada */
+            text-shadow: 0 2px 6px rgba(0,0,0,0.5); 
         }
 
         .main-container { padding: 25px 30px; }
@@ -278,8 +276,10 @@
             if (!data || data.length === 0) return;
 
             let filteredData = data.filter(p => {
-                if (!p.Equipo) return false;
-                return p.Equipo.toString().toLowerCase().trim() === currentTab;
+                // MAGIA ANTI-ERRORES: Busca en la hoja por cualquiera de estos nombres
+                const tabCategory = p['Frente de trabajo'] || p['Frente'] || p['Plataforma'] || p['Equipo'];
+                if (!tabCategory) return false;
+                return tabCategory.toString().toLowerCase().trim() === currentTab;
             });
 
             filteredData.sort((a, b) => {

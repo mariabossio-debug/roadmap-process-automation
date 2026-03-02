@@ -51,26 +51,27 @@
         .controls-header { display: flex; align-items: center; margin-bottom: 15px; }
         
         .tabs { display: flex; gap: 10px; }
-        .tab { font-family: 'Montserrat', sans-serif; font-weight: 400; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.3s ease; }
-        .tab.active { background: var(--bold-coral); color: #fff; font-weight: 600; box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2); }
+        .tab { font-family: 'Montserrat', sans-serif; font-weight: 600; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.2s ease; }
+        .tab.active { background: var(--bold-coral); color: #fff; box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2); }
 
         .legend-container { display: flex; flex-wrap: wrap; align-items: center; gap: 15px; margin-bottom: 20px; padding: 12px 15px; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .legend-title { font-weight: 700; font-size: 13px; margin-right: 5px; color: var(--bold-azul); }
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #555;}
         .legend-color { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
 
-        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; overflow-y: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
+        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
         
-        .timeline-scroll-area { min-width: 3200px; position: relative; display: flex; flex-direction: column;}
+        /* Lienzo más ancho para asegurar que cajas cortas tengan buen espacio físico */
+        .timeline-scroll-area { min-width: 4800px; position: relative; display: flex; flex-direction: column;}
 
         .quarters-header { display: flex; border-bottom: 2px solid #fff; background: var(--bold-coral); color: white; border-radius: 8px 8px 0 0;}
         .quarter { text-align: center; font-weight: 700; font-size: 14px; padding: 6px 0; border-right: 2px solid rgba(255,255,255,0.4); box-sizing: border-box; }
         .quarter:last-child { border-right: none; }
 
         .months-header { display: flex; border-bottom: 3px solid var(--bold-coral); background: var(--bold-azul); color: white; }
-        .month { text-align: center; font-weight: 600; padding: 10px 0; border-right: 2px solid rgba(255,255,255,0.3); box-sizing: border-box; }
+        .month { text-align: center; font-weight: 700; font-size: 13px; padding: 10px 0; border-right: 2px solid rgba(255,255,255,0.3); box-sizing: border-box; }
         
-        .weeks-header { display: flex; border-bottom: 1px solid var(--border-color); background: var(--bold-gris-claro); }
+        .weeks-header { display: flex; border-bottom: 1px solid var(--border-color); background: var(--bold-blanco); }
         .week { text-align: center; font-size: 11px; padding: 6px 0; font-weight: 600; color: var(--bold-azul); border-right: 1px dashed var(--bold-gris-oscuro); box-sizing: border-box; }
 
         .grid-lines { position: absolute; top: 85px; bottom: 0; left: 0; right: 0; display: flex; z-index: 0; pointer-events: none; }
@@ -87,21 +88,36 @@
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            padding: 0 10px 0 14px; 
+            padding: 0 10px; 
             color: white; 
             font-size: 12px; 
             font-weight: 600; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
-            transition: transform 0.2s ease, filter 0.2s ease; 
             box-sizing: border-box; 
-            gap: 10px;
-            min-width: max-content; 
+            gap: 8px;
+            /* Reglas estrictas: La caja obedece la matemática, si el texto sobra, se oculta */
+            overflow: hidden;
+            transition: all 0.2s ease;
         }
         
-        .project-bar[data-area="legal"] { color: var(--bold-azul); }
-        .project-bar:hover { filter: brightness(1.1); z-index: 100; transform: scale(1.02); box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: default; }
+        /* Efecto Hover: Si el texto era largo, la caja se expande para dejarlo leer */
+        .project-bar:hover { 
+            width: max-content !important; 
+            padding-right: 15px;
+            z-index: 1000 !important; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+            cursor: default; 
+        }
 
-        .project-title { white-space: nowrap; }
+        .project-bar[data-area="legal"] { color: var(--bold-azul); }
+
+        .project-title { 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis;
+            flex-grow: 1;
+        }
+
         .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
         .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
         .project-bar[data-area="legal"] .badge { background: rgba(0,0,0,0.1); }
@@ -172,7 +188,7 @@
     <script>
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
-        // Ventana estricta del año 2026
+        // Marco de tiempo estricto 2026
         const wStart = new Date(2026, 0, 1, 0, 0, 0);
         const wEnd = new Date(2026, 11, 31, 23, 59, 59);
         const totalDays = (wEnd - wStart) / (1000 * 60 * 60 * 24);
@@ -225,13 +241,11 @@
             return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
         }
 
-        // NUEVO PARSEADOR DE FECHAS ESTRICTO A PRUEBA DE ZONAS HORARIAS
+        // PARSEADOR MATEMÁTICO DE FECHAS (Evita que la zona horaria retrase un día)
         function parseDateSafe(dateValue) {
             if (!dateValue) return null;
-            // Extrae estrictamente la fecha YYYY-MM-DD sin importar lo que traiga el string
             const match = dateValue.toString().match(/(\d{4})-(\d{2})-(\d{2})/);
             if(match) {
-               // Configuramos la fecha al MEDIODÍA local. Así no salta al día anterior nunca.
                return new Date(match[1], match[2] - 1, match[3], 12, 0, 0);
             }
             return new Date(dateValue);
@@ -269,33 +283,36 @@
                 return p.Equipo.toString().toLowerCase().trim() === currentTab;
             });
 
-            // ==============================================================
-            // ORDEN ESTRICTO DE CASCADA (1: Fecha, 2: Área, 3: Duración)
-            // ==============================================================
+            // =======================================================
+            // ALGORITMO TETRIS ORGANIZADO
+            // 1. Prioriza cronología. 2. Agrupa por área. 3. Por duración.
+            // =======================================================
             filteredData.sort((a, b) => {
                 const dateA = parseDateSafe(a['Fecha de Inicio'])?.getTime() || 0;
                 const dateB = parseDateSafe(b['Fecha de Inicio'])?.getTime() || 0;
 
-                // 1. Cronológico estricto (los más viejos van primero/arriba)
                 if (dateA !== dateB) return dateA - dateB;
 
-                // 2. Si inician el mismo día, agrupar por color (Área)
                 const areaA = normalizeText(a['Área']);
                 const areaB = normalizeText(b['Área']);
                 if (areaA !== areaB) return areaA.localeCompare(areaB);
 
-                // 3. El más largo queda de base
                 const endA = parseDateSafe(a['Fecha de Fin'])?.getTime() || 0;
                 const endB = parseDateSafe(b['Fecha de Fin'])?.getTime() || 0;
                 return endB - endA; 
             });
 
-            filteredData.forEach((project, index) => {
+            // Seguimiento matemático del final de cada fila
+            const rowEndPositions = [];
+
+            filteredData.forEach(project => {
                 const leftPos = getTimelinePosition(project['Fecha de Inicio']);
                 const rightPos = getTimelinePosition(project['Fecha de Fin']);
                 
                 if (leftPos === null || rightPos === null) return;
                 
+                // El ancho es ESTRÍCTAMENTE matemático. 
+                // Ya no medimos el texto para evitar dañar el calendario.
                 let width = rightPos - leftPos;
                 
                 if (rightPos > 0 && leftPos < 100) {
@@ -327,24 +344,31 @@
                         <span class="project-title" title="${projName}">${projName}</span>
                         <div class="badges">
                             ${devName && devName.toLowerCase() !== 'n/a' ? `<span class="badge">${devName}</span>` : ''}
-                            <span class="status-badge" style="background-color: ${statusColor}" title="Estado: ${project['Estado']}"></span>
+                            <span class="status-badge" style="background-color: ${statusColor}"></span>
                         </div>
                     `;
                     
                     container.appendChild(bar);
 
-                    // ==============================================================
-                    // LA CASCADA: Cada proyecto tiene su propia fila única secuencial
-                    // Cero amontonamientos.
-                    // ==============================================================
-                    let currentRow = index; 
+                    // =======================================================
+                    // BUSCADOR DE ESPACIOS (Gantt Packing)
+                    // Busca la fila más alta disponible que no pise a la caja anterior
+                    // =======================================================
+                    let currentRow = 0;
+                    // El -0.4 es solo un pequeñísimo margen visual de respiro entre cajas de la misma fila
+                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.4)) {
+                        currentRow++;
+                    }
+                    
+                    // Aseguramos que esa fila queda ocupada hasta que termine el proyecto
+                    rowEndPositions[currentRow] = rightPos;
                     bar.style.top = `${currentRow * 42}px`; 
                 }
             });
             
-            // Ajustamos la altura final del calendario
-            container.style.height = `${filteredData.length * 42 + 60}px`;
+            container.style.height = `${rowEndPositions.length * 42 + 60}px`;
 
+            // Auto-scroll centrado en "Hoy"
             setTimeout(() => {
                 const wrapper = document.querySelector('.timeline-wrapper');
                 const scrollArea = document.querySelector('.timeline-scroll-area');
@@ -376,7 +400,7 @@
                 renderProjects();
                 renderTodayLine(); 
             } catch (error) {
-                console.error("Error cargando los datos", error);
+                console.error("Error", error);
             }
         }
 

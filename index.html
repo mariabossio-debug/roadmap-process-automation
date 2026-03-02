@@ -59,10 +59,10 @@
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #555;}
         .legend-color { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
 
-        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; overflow-y: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
         
-        /* Lienzo más ancho para asegurar que cajas cortas tengan buen espacio físico */
-        .timeline-scroll-area { min-width: 4800px; position: relative; display: flex; flex-direction: column;}
+        /* LA SOLUCIÓN: Un lienzo súper ancho (9000px). Así las cajas de pocos días son anchas físicamente en tu pantalla y el texto siempre cabe sin falsificar fechas. */
+        .timeline-scroll-area { min-width: 9000px; position: relative; display: flex; flex-direction: column;}
 
         .quarters-header { display: flex; border-bottom: 2px solid #fff; background: var(--bold-coral); color: white; border-radius: 8px 8px 0 0;}
         .quarter { text-align: center; font-weight: 700; font-size: 14px; padding: 6px 0; border-right: 2px solid rgba(255,255,255,0.4); box-sizing: border-box; }
@@ -88,35 +88,22 @@
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            padding: 0 10px; 
+            padding: 0 10px 0 14px; 
             color: white; 
             font-size: 12px; 
             font-weight: 600; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
             box-sizing: border-box; 
             gap: 8px;
-            /* Reglas estrictas: La caja obedece la matemática, si el texto sobra, se oculta */
+            /* Cero bugeos, cero text-overflows problemáticos, estático y confiable */
             overflow: hidden;
-            transition: all 0.2s ease;
+            transition: filter 0.2s ease;
         }
         
-        /* Efecto Hover: Si el texto era largo, la caja se expande para dejarlo leer */
-        .project-bar:hover { 
-            width: max-content !important; 
-            padding-right: 15px;
-            z-index: 1000 !important; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
-            cursor: default; 
-        }
-
+        .project-bar:hover { filter: brightness(1.1); z-index: 100; cursor: default; }
         .project-bar[data-area="legal"] { color: var(--bold-azul); }
 
-        .project-title { 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis;
-            flex-grow: 1;
-        }
+        .project-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
 
         .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
         .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
@@ -125,19 +112,7 @@
         .project-bar[data-area="legal"] .status-badge { border-color: var(--bold-azul); }
         
         .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background-color: var(--bold-coral); z-index: 20; pointer-events: none;}
-        .today-label { 
-            position: absolute; 
-            bottom: 12px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: var(--bold-coral); 
-            color: white; 
-            padding: 5px 16px; 
-            border-radius: 12px; 
-            font-size: 11px; 
-            font-weight: 700; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-        }
+        .today-label { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: var(--bold-coral); color: white; padding: 5px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.25);}
         
     </style>
 </head>
@@ -188,7 +163,6 @@
     <script>
         const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
         
-        // Marco de tiempo estricto 2026
         const wStart = new Date(2026, 0, 1, 0, 0, 0);
         const wEnd = new Date(2026, 11, 31, 23, 59, 59);
         const totalDays = (wEnd - wStart) / (1000 * 60 * 60 * 24);
@@ -241,7 +215,6 @@
             return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
         }
 
-        // PARSEADOR MATEMÁTICO DE FECHAS (Evita que la zona horaria retrase un día)
         function parseDateSafe(dateValue) {
             if (!dateValue) return null;
             const match = dateValue.toString().match(/(\d{4})-(\d{2})-(\d{2})/);
@@ -283,10 +256,7 @@
                 return p.Equipo.toString().toLowerCase().trim() === currentTab;
             });
 
-            // =======================================================
-            // ALGORITMO TETRIS ORGANIZADO
-            // 1. Prioriza cronología. 2. Agrupa por área. 3. Por duración.
-            // =======================================================
+            // Orden Cascading Estricto: 1. Fecha de Inicio, 2. Área, 3. Fecha Fin
             filteredData.sort((a, b) => {
                 const dateA = parseDateSafe(a['Fecha de Inicio'])?.getTime() || 0;
                 const dateB = parseDateSafe(b['Fecha de Inicio'])?.getTime() || 0;
@@ -302,7 +272,6 @@
                 return endB - endA; 
             });
 
-            // Seguimiento matemático del final de cada fila
             const rowEndPositions = [];
 
             filteredData.forEach(project => {
@@ -311,8 +280,7 @@
                 
                 if (leftPos === null || rightPos === null) return;
                 
-                // El ancho es ESTRÍCTAMENTE matemático. 
-                // Ya no medimos el texto para evitar dañar el calendario.
+                // Ancho estrictamente matemático basado en las fechas.
                 let width = rightPos - leftPos;
                 
                 if (rightPos > 0 && leftPos < 100) {
@@ -344,23 +312,19 @@
                         <span class="project-title" title="${projName}">${projName}</span>
                         <div class="badges">
                             ${devName && devName.toLowerCase() !== 'n/a' ? `<span class="badge">${devName}</span>` : ''}
-                            <span class="status-badge" style="background-color: ${statusColor}"></span>
+                            <span class="status-badge" style="background-color: ${statusColor}" title="Estado: ${project['Estado']}"></span>
                         </div>
                     `;
                     
                     container.appendChild(bar);
 
-                    // =======================================================
-                    // BUSCADOR DE ESPACIOS (Gantt Packing)
-                    // Busca la fila más alta disponible que no pise a la caja anterior
-                    // =======================================================
+                    // Algoritmo Tetris: Encuentra la primera fila disponible basándose en las FECHAS.
                     let currentRow = 0;
-                    // El -0.4 es solo un pequeñísimo margen visual de respiro entre cajas de la misma fila
-                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.4)) {
+                    // Dejamos un ínfimo margen del 0.1% (unos 9 pixeles) para que no se toquen visualmente
+                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.1)) {
                         currentRow++;
                     }
                     
-                    // Aseguramos que esa fila queda ocupada hasta que termine el proyecto
                     rowEndPositions[currentRow] = rightPos;
                     bar.style.top = `${currentRow * 42}px`; 
                 }
@@ -368,18 +332,22 @@
             
             container.style.height = `${rowEndPositions.length * 42 + 60}px`;
 
-            // Auto-scroll centrado en "Hoy"
+            // Auto-scroll centrado en "Hoy" de manera exacta
             setTimeout(() => {
                 const wrapper = document.querySelector('.timeline-wrapper');
                 const scrollArea = document.querySelector('.timeline-scroll-area');
                 if (!wrapper || !scrollArea) return;
                 
                 const scrollWidth = scrollArea.offsetWidth;
+                const wrapperWidth = wrapper.offsetWidth;
+                
                 const today = new Date();
                 const daysPassed = (today - wStart) / (1000 * 60 * 60 * 24);
                 
                 const todayPosition = (daysPassed / 365) * scrollWidth;
-                const targetLeft = Math.max(0, todayPosition - 400); 
+                
+                // Centra la línea de HOY exactamente en la mitad de la pantalla de tu monitor
+                const targetLeft = Math.max(0, todayPosition - (wrapperWidth / 2)); 
 
                 wrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
             }, 100);

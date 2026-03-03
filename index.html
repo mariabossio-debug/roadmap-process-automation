@@ -12,7 +12,7 @@
 
     <style>
         /* ==========================================================================
-           VARIABLES Y PALETA DE COLOR
+           VARIABLES Y PALETA DE COLOR OFICIAL (18 ÁREAS ÚNICAS)
            ========================================================================== */
         :root {
             --bold-coral: #FF2847;
@@ -27,15 +27,26 @@
             --text-main: var(--bold-azul);
             --border-color: var(--bold-gris-oscuro);
             
-            --area-risk: #052d65;
-            --area-financial: #c31a2f;
-            --area-sales: #692e60;
-            --area-human-talent: #1b8959;
-            --area-legal: #ffc217;
-            --area-cs: #0b3b26;
-            --area-logistica: #121f6c;
-            --area-hubs: var(--bold-coral); 
-            --area-marketing: #0097a7;
+            /* MAPEO EXACTO DE COLORES DE FEEDBACK A LAS 18 ÁREAS */
+            --area-risk: #610017;
+            --area-financial: #C31A2F;
+            --area-sales: #0A53A5;
+            --area-human-talent: #1B8959;
+            --area-legal-y-cumplimiento: #FFC217;
+            --area-cs: #0B3B26;
+            --area-logistica: #052D65;
+            --area-hubs: #910022;
+            --area-marketing: #227AD1;
+            --area-credito: #5B3100;
+            --area-partners: #A16B00;
+            --area-sales-ops: #6CDCAB;
+            --area-smb: #1E1E1E;
+            --area-inbound: #606060;
+            --area-cx: #969696;
+            --area-sci: #FBF3F5;
+            --area-procurement: #FFF3D1;
+            --area-human-ops: #F3F3F3;
+            
             --area-default: linear-gradient(135deg, #d00030 0%, #00308f 100%); 
         }
 
@@ -57,7 +68,7 @@
         .right-controls { display: flex; align-items: center; gap: 15px; }
 
         /* ==========================================================================
-           FILTRO TIPO EXCEL (AHORA TAMBIÉN FUNCIONA COMO LEYENDA DE COLORES)
+           FILTRO TIPO EXCEL / LEYENDA
            ========================================================================== */
         .custom-filter { position: relative; font-family: 'Montserrat', sans-serif; }
         
@@ -102,14 +113,11 @@
         .fp-btn-cancel { flex: 1; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; padding: 8px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s;}
         .fp-btn-cancel:hover { background: #e0e0e0; }
 
-        /* SCROLLBAR CUSTOM PARA EL DROPDOWN DE FILTROS */
         .fp-list::-webkit-scrollbar { width: 6px; }
         .fp-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px;}
         .fp-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px;}
 
-        /* ==========================================================================
-           CONTROLES RESTANTES
-           ========================================================================== */
+        /* TOGGLE SEMANAS / MESES */
         .view-toggle { display: flex; align-items: center; gap: 12px; background: #fff; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); color: var(--bold-azul); font-size: 13px; }
         #label-semanas { font-weight: 700; opacity: 1; transition: 0.3s; }
         #label-meses { font-weight: 400; opacity: 0.5; transition: 0.3s; }
@@ -128,25 +136,10 @@
            ========================================================================== */
         .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; overflow-y: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
         
-        /* --------------------------------------------------------------------------
-           NUEVO SCROLLBAR ESTILIZADO CON TU COLOR #D2D4E1
-           -------------------------------------------------------------------------- */
-        .timeline-wrapper::-webkit-scrollbar {
-            height: 12px; /* Grosor de la barra horizontal */
-        }
-        .timeline-wrapper::-webkit-scrollbar-track {
-            background: var(--bold-blanco);
-            border-radius: 0 0 8px 8px;
-        }
-        .timeline-wrapper::-webkit-scrollbar-thumb {
-            background-color: #D2D4E1; /* Tu color escogido */
-            border-radius: 8px;
-            border: 2px solid var(--bold-blanco); /* Crea un efecto visual de relleno */
-        }
-        .timeline-wrapper::-webkit-scrollbar-thumb:hover {
-            background-color: #b8bbcc; /* Oscurece un poquito al pasar el mouse */
-        }
-        /* -------------------------------------------------------------------------- */
+        .timeline-wrapper::-webkit-scrollbar { height: 12px; }
+        .timeline-wrapper::-webkit-scrollbar-track { background: var(--bold-blanco); border-radius: 0 0 8px 8px; }
+        .timeline-wrapper::-webkit-scrollbar-thumb { background-color: #D2D4E1; border-radius: 8px; border: 2px solid var(--bold-blanco); }
+        .timeline-wrapper::-webkit-scrollbar-thumb:hover { background-color: #b8bbcc; }
 
         .timeline-scroll-area { min-width: 3800px; position: relative; display: flex; flex-direction: column; transition: min-width 0.4s ease-out; }
         .timeline-scroll-area.monthly-view { min-width: 1400px; }
@@ -170,6 +163,7 @@
 
         .projects-area { position: relative; margin-top: 25px; padding-bottom: 50px; min-height: 300px; z-index: 1; }
 
+        /* CÁPSULAS DE PROYECTOS */
         .project-bar { 
             position: absolute; height: 30px; border-radius: 15px; 
             display: flex; align-items: center; justify-content: space-between; 
@@ -179,17 +173,39 @@
         }
         
         .project-bar:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.25); z-index: 100 !important; cursor: default; }
-        .project-bar[data-area="legal"] { color: var(--bold-azul); }
 
         .project-title { white-space: nowrap; }
 
         .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
         .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
-        .project-bar[data-area="legal"] .badge { background: rgba(0,0,0,0.1); }
-
         .status-icon { height: 18px; width: auto; display: inline-block; margin-left: 4px; filter: brightness(0) invert(1); }
         .status-icon.piloto-icon { transform: scale(1.15); }
-        .project-bar[data-area="legal"] .status-icon { filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%); }
+
+        /* ==========================================================================
+           EXCEPCIONES DE LEGIBILIDAD PARA ÁREAS CON COLORES MUY CLAROS
+           ========================================================================== */
+        .project-bar[data-area="legal-y-cumplimiento"],
+        .project-bar[data-area="sci"],
+        .project-bar[data-area="procurement"],
+        .project-bar[data-area="human-ops"] {
+            color: var(--bold-azul);
+        }
+
+        .project-bar[data-area="legal-y-cumplimiento"] .badge,
+        .project-bar[data-area="sci"] .badge,
+        .project-bar[data-area="procurement"] .badge,
+        .project-bar[data-area="human-ops"] .badge {
+            background: rgba(0,0,0,0.08); 
+            color: var(--bold-azul); 
+        }
+
+        .project-bar[data-area="legal-y-cumplimiento"] .status-icon,
+        .project-bar[data-area="sci"] .status-icon,
+        .project-bar[data-area="procurement"] .status-icon,
+        .project-bar[data-area="human-ops"] .status-icon {
+            filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%);
+        }
+        /* ========================================================================== */
         
         .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background-color: var(--bold-coral); z-index: 20; pointer-events: none;}
         .today-label { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: var(--bold-coral); color: white; padding: 5px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.25);}
@@ -293,9 +309,6 @@
             return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
         }
 
-        // ==========================================================================
-        // LÓGICA DEL FILTRO Y LEYENDA INTEGRADA
-        // ==========================================================================
         function populateFilterDropdown() {
             const container = document.getElementById('filterOptionsContainer');
             const uniqueAreas = [...new Set(data.map(p => p['Área'] ? p['Área'].toString().trim() : 'Sin Área').filter(a => a !== 'Sin Área'))].sort();
@@ -305,7 +318,6 @@
                 const normValue = normalizeText(area);
                 const isChecked = selectedAreas.length === 0 || selectedAreas.includes(normValue) ? 'checked' : '';
                 
-                // INYECCIÓN DEL COLOR PARA LA LEYENDA
                 let dotColor = `var(--area-${normValue}, var(--bold-azul))`;
                 if(normValue === 'default') dotColor = 'var(--area-default)';
 
@@ -385,8 +397,6 @@
             document.getElementById('filterPanel').classList.remove('show');
             populateFilterDropdown(); 
         }
-
-        // ==========================================================================
 
         function renderCalendarHeaders() {
             const monthsNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
@@ -474,10 +484,14 @@
                 const dateA = parseDateSafe(a['Fecha de Inicio'])?.getTime() || 0;
                 const dateB = parseDateSafe(b['Fecha de Inicio'])?.getTime() || 0;
                 if (dateA !== dateB) return dateA - dateB;
+
                 const areaA = normalizeText(a['Área']);
                 const areaB = normalizeText(b['Área']);
                 if (areaA !== areaB) return areaA.localeCompare(areaB);
-                return (parseDateSafe(b['Fecha de Fin'])?.getTime() || 0) - (parseDateSafe(a['Fecha de Fin'])?.getTime() || 0); 
+
+                const endA = parseDateSafe(a['Fecha de Fin'])?.getTime() || 0;
+                const endB = parseDateSafe(b['Fecha de Fin'])?.getTime() || 0;
+                return endB - endA; 
             });
 
             const rowEndPositions = [];
@@ -516,7 +530,6 @@
                     const devName = project['Desarrollador'] || '';
                     const projName = project['Nombre del proyecto'] || 'Sin nombre';
 
-                    // NUEVO TOOLTIP CON LA INFORMACIÓN DEL ÁREA
                     const tooltipText = `Proyecto: ${projName}\nÁrea: ${rawArea}\nEstado: ${project['Estado'] || 'No definido'}`;
                     bar.setAttribute('title', tooltipText);
 

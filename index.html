@@ -54,17 +54,63 @@
         .tab { font-family: 'Montserrat', sans-serif; font-weight: 600; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.2s ease; }
         .tab.active { background: var(--bold-coral); color: #fff; box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2); }
 
-        /* CONTENEDOR DERECHO PARA AGRUPAR FILTRO Y TOGGLE */
         .right-controls { display: flex; align-items: center; gap: 15px; }
 
-        .filter-container { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: var(--bold-azul); }
-        .filter-container select {
-            padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: #fff;
-            color: var(--bold-azul); font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px;
-            outline: none; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s ease;
+        /* ==========================================================================
+           NUEVO COMPONENTE: DROPDOWN DE FILTRO TIPO EXCEL
+           ========================================================================== */
+        .custom-filter { position: relative; font-family: 'Montserrat', sans-serif; }
+        
+        /* El Botón que abre el menú */
+        .filter-btn {
+            display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; 
+            border: 1px solid var(--border-color); background-color: #fff; color: var(--bold-azul); 
+            font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px; 
+            cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s ease;
         }
-        .filter-container select:focus { border-color: var(--bold-coral); box-shadow: 0 2px 8px rgba(255, 40, 71, 0.15); }
+        .filter-btn:hover { border-color: var(--bold-coral); }
+        .filter-btn::after { content: '▼'; font-size: 10px; opacity: 0.6; }
 
+        /* El Panel del Menú (Oculto por defecto) */
+        .filter-panel {
+            position: absolute; top: 110%; right: 0; background: #fff; width: 260px;
+            border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); border: 1px solid var(--border-color);
+            z-index: 1000; display: none; flex-direction: column; padding: 15px; box-sizing: border-box;
+        }
+        .filter-panel.show { display: flex; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cabecera del Panel */
+        .fp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .fp-title { font-size: 13px; color: #555; font-weight: 600; }
+        .fp-clear { font-size: 12px; color: var(--bold-coral); cursor: pointer; font-weight: 600; }
+        .fp-clear:hover { text-decoration: underline; }
+
+        /* Buscador del Panel */
+        .fp-search-box { margin-bottom: 10px; }
+        .fp-search-box input {
+            width: 100%; padding: 8px 10px; border-radius: 4px; border: 1px solid #ccc;
+            font-family: 'Montserrat', sans-serif; font-size: 12px; box-sizing: border-box; outline: none;
+        }
+        .fp-search-box input:focus { border-color: var(--bold-azul); }
+
+        /* Lista de Checkboxes */
+        .fp-list { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 10px; }
+        .fp-list label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--bold-azul); cursor: pointer; font-weight: 500; }
+        .fp-list input[type="checkbox"] { accent-color: var(--bold-coral); cursor: pointer; width: 14px; height: 14px; margin: 0;}
+        
+        .fp-select-all { padding-bottom: 8px; border-bottom: 1px solid var(--bold-gris-claro); margin-bottom: 8px; }
+
+        /* Botones de Acción */
+        .fp-actions { display: flex; gap: 10px; }
+        .fp-btn-ok { flex: 1; background: var(--bold-azul); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s;}
+        .fp-btn-ok:hover { filter: brightness(1.2); }
+        .fp-btn-cancel { flex: 1; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; padding: 8px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s;}
+        .fp-btn-cancel:hover { background: #e0e0e0; }
+
+        /* ==========================================================================
+           CONTROLES RESTANTES Y LEYENDAS
+           ========================================================================== */
         .view-toggle { display: flex; align-items: center; gap: 12px; background: #fff; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); color: var(--bold-azul); font-size: 13px; }
         #label-semanas { font-weight: 700; opacity: 1; transition: 0.3s; }
         #label-meses { font-weight: 400; opacity: 0.5; transition: 0.3s; }
@@ -119,6 +165,7 @@
         .project-bar[data-area="legal"] { color: var(--bold-azul); }
 
         .project-title { white-space: nowrap; }
+
         .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
         .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
         .project-bar[data-area="legal"] .badge { background: rgba(0,0,0,0.1); }
@@ -158,20 +205,32 @@
             </div>
             
             <div class="right-controls">
-                <div class="filter-container">
-                    <label for="areaFilter">Área:</label>
-                    <select id="areaFilter" onchange="filterByArea()">
-                        <option value="all">Todas las áreas</option>
-                        <option value="risk">Risk</option>
-                        <option value="financial">Financial</option>
-                        <option value="sales">Sales</option>
-                        <option value="human-talent">Human Talent</option>
-                        <option value="legal">Legal</option>
-                        <option value="cs">CS</option>
-                        <option value="logistica">Logística</option>
-                        <option value="hubs">Hubs</option>
-                        <option value="marketing">Marketing</option>
-                    </select>
+                
+                <div class="custom-filter" id="customFilter">
+                    <button class="filter-btn" id="filterBtnText" onclick="toggleFilterMenu()">Filtrar por Área</button>
+                    
+                    <div class="filter-panel" id="filterPanel">
+                        <div class="fp-header">
+                            <span class="fp-title">Filtrar por:</span>
+                            <span class="fp-clear" onclick="clearFilter()">Limpiar</span>
+                        </div>
+                        <div class="fp-search-box">
+                            <input type="text" id="filterSearch" placeholder="Buscar..." onkeyup="searchFilter()">
+                        </div>
+                        
+                        <div class="fp-list">
+                            <label class="fp-select-all">
+                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" checked>
+                                <b>(Seleccionar todo)</b>
+                            </label>
+                            <div id="filterOptionsContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                        </div>
+
+                        <div class="fp-actions">
+                            <button class="fp-btn-ok" onclick="applyFilter()">OK</button>
+                            <button class="fp-btn-cancel" onclick="closeFilterMenu()">Cancelar</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="view-toggle" id="toggleContainer">
@@ -222,39 +281,126 @@
         const totalDays = (wEnd - wStart) / (1000 * 60 * 60 * 24);
 
         let currentTab = 'appian'; 
-        let currentArea = 'all'; 
         let data = []; 
+        let selectedAreas = []; // Un arreglo vacío significa que TODO está seleccionado
+
+        function normalizeText(text) {
+            if (!text) return 'default';
+            return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
+        }
+
+        // ==========================================================================
+        // LÓGICA DEL NUEVO FILTRO TIPO EXCEL
+        // ==========================================================================
+        
+        // 1. EXTRAE TODAS LAS ÁREAS DIRECTAMENTE DE GOOGLE SHEETS Y ARMA EL MENÚ
+        function populateFilterDropdown() {
+            const container = document.getElementById('filterOptionsContainer');
+            // Extrae áreas únicas, descarta vacíos y ordena alfabéticamente
+            const uniqueAreas = [...new Set(data.map(p => p['Área'] ? p['Área'].toString().trim() : 'Sin Área').filter(a => a !== 'Sin Área'))].sort();
+            
+            let html = '';
+            uniqueAreas.forEach(area => {
+                const normValue = normalizeText(area);
+                // Si la lista de seleccionados está vacía (todas) o incluye esta área, chulea la caja
+                const isChecked = selectedAreas.length === 0 || selectedAreas.includes(normValue) ? 'checked' : '';
+                html += `<label class="area-item"><input type="checkbox" class="area-checkbox" value="${normValue}" data-name="${area}" ${isChecked} onchange="updateSelectAllStatus()"> ${area}</label>`;
+            });
+            container.innerHTML = html;
+            updateSelectAllStatus();
+        }
+
+        function toggleFilterMenu() {
+            document.getElementById('filterPanel').classList.toggle('show');
+        }
+
+        // Cierra el menú si haces clic afuera
+        document.addEventListener('click', function(event) {
+            const filterElement = document.getElementById('customFilter');
+            if (filterElement && !filterElement.contains(event.target)) {
+                document.getElementById('filterPanel').classList.remove('show');
+            }
+        });
+
+        function toggleSelectAll(sourceCheckbox) {
+            const checkboxes = document.querySelectorAll('.area-checkbox');
+            checkboxes.forEach(cb => {
+                // Solo afecta a los que no estén ocultos por el buscador
+                if(cb.parentElement.style.display !== 'none') {
+                    cb.checked = sourceCheckbox.checked;
+                }
+            });
+        }
+
+        function updateSelectAllStatus() {
+            const checkboxes = Array.from(document.querySelectorAll('.area-checkbox:not([style*="display: none"])'));
+            const allChecked = checkboxes.length > 0 && checkboxes.every(cb => cb.checked);
+            document.getElementById('selectAllCheckbox').checked = allChecked;
+        }
+
+        function searchFilter() {
+            const term = document.getElementById('filterSearch').value.toLowerCase();
+            const labels = document.querySelectorAll('.area-item');
+            labels.forEach(label => {
+                const text = label.textContent.toLowerCase();
+                label.style.display = text.includes(term) ? 'flex' : 'none';
+            });
+            updateSelectAllStatus();
+        }
+
+        function clearFilter() {
+            document.getElementById('filterSearch').value = '';
+            searchFilter();
+            document.querySelectorAll('.area-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAllCheckbox').checked = false;
+        }
+
+        function applyFilter() {
+            const checkboxes = document.querySelectorAll('.area-checkbox');
+            const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
+            
+            if (checkedBoxes.length === checkboxes.length) {
+                selectedAreas = []; // Todas seleccionadas
+                document.getElementById('filterBtnText').innerText = 'Filtrar por Área';
+            } else if (checkedBoxes.length === 0) {
+                selectedAreas = ['_none_']; // Ninguna seleccionada (Oculta todo)
+                document.getElementById('filterBtnText').innerText = 'Ninguna seleccionada';
+            } else {
+                selectedAreas = checkedBoxes.map(cb => cb.value);
+                if (checkedBoxes.length === 1) {
+                    document.getElementById('filterBtnText').innerText = 'Área: ' + checkedBoxes[0].dataset.name;
+                } else {
+                    document.getElementById('filterBtnText').innerText = 'Áreas: Varias (' + checkedBoxes.length + ')';
+                }
+            }
+            
+            document.getElementById('filterPanel').classList.remove('show');
+            renderProjects();
+            setTimeout(scrollToToday, 100);
+        }
+
+        function closeFilterMenu() {
+            document.getElementById('filterPanel').classList.remove('show');
+            populateFilterDropdown(); // Restaura las casillas a como estaban antes de abrir
+        }
+
+        // ==========================================================================
 
         function renderCalendarHeaders() {
             const monthsNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
             const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
-            
-            const quarters = [
-                { name: 'Q1', days: 31 + 28 + 31 },
-                { name: 'Q2', days: 30 + 31 + 30 },
-                { name: 'Q3', days: 31 + 31 + 30 },
-                { name: 'Q4', days: 31 + 30 + 31 }
-            ];
-
+            const quarters = [{ name: 'Q1', days: 90 }, { name: 'Q2', days: 91 }, { name: 'Q3', days: 92 }, { name: 'Q4', days: 92 }];
             let htmlQuarters = '';
-            quarters.forEach(q => {
-                const qWidth = (q.days / totalDays) * 100;
-                htmlQuarters += `<div class="quarter" style="width: ${qWidth}%;">${q.name}</div>`;
-            });
+            quarters.forEach(q => { htmlQuarters += `<div class="quarter" style="width: ${(q.days / totalDays) * 100}%;">${q.name}</div>`; });
             document.getElementById('quarters-header').innerHTML = htmlQuarters;
 
-            let htmlMonths = '';
-            let htmlWeeks = '';
-            let htmlGrid = '';
-
+            let htmlMonths = '', htmlWeeks = '', htmlGrid = '';
             daysInMonths.forEach((days, i) => {
                 const monthWidthPct = (days / totalDays) * 100;
                 htmlMonths += `<div class="month" style="width: ${monthWidthPct}%;">${monthsNames[i]}</div>`;
                 htmlGrid += `<div class="grid-month-container" style="width: ${monthWidthPct}%;">`;
-
                 for(let w = 1; w <= 4; w++) {
-                    const weekWidthPct = monthWidthPct / 4;
-                    htmlWeeks += `<div class="week" style="width: ${weekWidthPct}%;">Semana ${w}</div>`;
+                    htmlWeeks += `<div class="week" style="width: ${monthWidthPct / 4}%;">Semana ${w}</div>`;
                     htmlGrid += `<div class="grid-week"></div>`;
                 }
                 htmlGrid += `</div>`; 
@@ -265,25 +411,17 @@
             document.getElementById('grid-lines').innerHTML = htmlGrid;
         }
 
-        function normalizeText(text) {
-            if (!text) return 'default';
-            return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, '-');
-        }
-
         function parseDateSafe(dateValue) {
             if (!dateValue) return null;
             const match = dateValue.toString().match(/(\d{4})-(\d{2})-(\d{2})/);
-            if(match) {
-               return new Date(match[1], match[2] - 1, match[3], 12, 0, 0);
-            }
+            if(match) return new Date(match[1], match[2] - 1, match[3], 12, 0, 0);
             return new Date(dateValue);
         }
 
         function getTimelinePosition(dateValue) {
             const date = parseDateSafe(dateValue);
             if (!date) return null;
-            const daysFromStart = (date - wStart) / (1000 * 60 * 60 * 24);
-            return (daysFromStart / totalDays) * 100; 
+            return ((date - wStart) / (1000 * 60 * 60 * 24) / totalDays) * 100; 
         }
 
         function renderTodayLine() {
@@ -291,7 +429,6 @@
             const formattedToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const todayPercentage = getTimelinePosition(formattedToday);
             const todayMarker = document.getElementById('today-marker');
-            
             if (todayPercentage >= 0 && todayPercentage <= 100) {
                 todayMarker.style.left = `${todayPercentage}%`;
                 todayMarker.style.display = 'block';
@@ -304,40 +441,16 @@
             const wrapper = document.querySelector('.timeline-wrapper');
             const scrollArea = document.querySelector('.timeline-scroll-area');
             if (!wrapper || !scrollArea) return;
-            
             const scrollWidth = scrollArea.offsetWidth;
-            const wrapperWidth = wrapper.offsetWidth;
-            const today = new Date();
-            const daysPassed = (today - wStart) / (1000 * 60 * 60 * 24);
-            const todayPosition = (daysPassed / 365) * scrollWidth;
-            
-            const targetLeft = Math.max(0, todayPosition - (wrapperWidth / 2)); 
-            wrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
+            const todayPosition = (((new Date() - wStart) / (1000 * 60 * 60 * 24)) / 365) * scrollWidth;
+            wrapper.scrollTo({ left: Math.max(0, todayPosition - (wrapper.offsetWidth / 2)), behavior: 'smooth' });
         }
 
         function toggleViewMode() {
             const isMonthly = document.getElementById('viewToggle').checked;
-            const scrollArea = document.getElementById('mainScrollArea');
-            const toggleContainer = document.getElementById('toggleContainer');
-            
-            if (isMonthly) {
-                scrollArea.classList.add('monthly-view');
-                toggleContainer.classList.add('monthly-active');
-            } else {
-                scrollArea.classList.remove('monthly-view');
-                toggleContainer.classList.remove('monthly-active');
-            }
-            
-            setTimeout(() => {
-                renderProjects();
-                scrollToToday();
-            }, 300);
-        }
-
-        function filterByArea() {
-            currentArea = document.getElementById('areaFilter').value;
-            renderProjects();
-            setTimeout(scrollToToday, 100); 
+            document.getElementById('mainScrollArea').classList.toggle('monthly-view', isMonthly);
+            document.getElementById('toggleContainer').classList.toggle('monthly-active', isMonthly);
+            setTimeout(() => { renderProjects(); scrollToToday(); }, 300);
         }
 
         function renderProjects() {
@@ -348,10 +461,14 @@
             if (!data || data.length === 0) return;
 
             let filteredData = data.filter(p => {
+                // 1. Filtrar por pestaña
                 const tabCategory = p['Frente de trabajo'] || p['Frente'] || p['Plataforma'] || p['Equipo'];
                 const matchesTab = tabCategory && tabCategory.toString().toLowerCase().trim() === currentTab;
+                
+                // 2. FILTRAR POR ÁREA (Nuevo sistema inteligente)
                 const areaValue = p['Área'] ? normalizeText(p['Área']) : 'default';
-                const matchesArea = currentArea === 'all' || areaValue === currentArea;
+                const matchesArea = selectedAreas.length === 0 || selectedAreas.includes(areaValue);
+
                 return matchesTab && matchesArea;
             });
 
@@ -359,14 +476,10 @@
                 const dateA = parseDateSafe(a['Fecha de Inicio'])?.getTime() || 0;
                 const dateB = parseDateSafe(b['Fecha de Inicio'])?.getTime() || 0;
                 if (dateA !== dateB) return dateA - dateB;
-
                 const areaA = normalizeText(a['Área']);
                 const areaB = normalizeText(b['Área']);
                 if (areaA !== areaB) return areaA.localeCompare(areaB);
-
-                const endA = parseDateSafe(a['Fecha de Fin'])?.getTime() || 0;
-                const endB = parseDateSafe(b['Fecha de Fin'])?.getTime() || 0;
-                return endB - endA; 
+                return (parseDateSafe(b['Fecha de Fin'])?.getTime() || 0) - (parseDateSafe(a['Fecha de Fin'])?.getTime() || 0); 
             });
 
             const rowEndPositions = [];
@@ -375,7 +488,6 @@
             filteredData.forEach(project => {
                 const leftPos = getTimelinePosition(project['Fecha de Inicio']);
                 const rightPos = getTimelinePosition(project['Fecha de Fin']);
-                
                 if (leftPos === null || rightPos === null) return;
                 
                 let width = rightPos - leftPos;
@@ -383,22 +495,15 @@
                 if (rightPos > 0 && leftPos < 100) {
                     const bar = document.createElement('div');
                     bar.className = 'project-bar';
-                    
                     const areaKey = normalizeText(project['Área']);
                     bar.setAttribute('data-area', areaKey);
                     
                     const displayLeft = Math.max(0, leftPos);
-                    const displayWidth = width - (displayLeft - leftPos);
-                    const finalWidth = Math.min(displayWidth, 100 - displayLeft);
+                    const finalWidth = Math.min(width - (displayLeft - leftPos), 100 - displayLeft);
 
                     bar.style.left = `${displayLeft}%`;
                     bar.style.width = `${finalWidth}%`;
-                    
-                    if (areaKey === 'default') {
-                        bar.style.background = `var(--area-default)`;
-                    } else {
-                        bar.style.background = `var(--area-${areaKey}, var(--bold-azul))`;
-                    }
+                    bar.style.background = areaKey === 'default' ? `var(--area-default)` : `var(--area-${areaKey}, var(--bold-azul))`;
 
                     const statusKey = normalizeText(project['Estado']);
                     const devName = project['Desarrollador'] || '';
@@ -420,20 +525,14 @@
                     
                     container.appendChild(bar);
 
-                    const actualWidthPx = bar.offsetWidth;
-                    const visualWidthPct = (actualWidthPx / containerWidth) * 100;
-                    const visualRightPos = displayLeft + Math.max(finalWidth, visualWidthPct);
-
+                    const visualRightPos = displayLeft + Math.max(finalWidth, (bar.offsetWidth / containerWidth) * 100);
                     let currentRow = 0;
-                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.2)) {
-                        currentRow++;
-                    }
+                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.2)) currentRow++;
                     
                     rowEndPositions[currentRow] = visualRightPos;
                     bar.style.top = `${currentRow * 40}px`; 
                 }
             });
-            
             container.style.height = `${rowEndPositions.length * 40 + 70}px`;
         }
 
@@ -449,12 +548,12 @@
 
             const container = document.getElementById('projects-container');
             const syncToast = document.getElementById('sync-toast');
-            
             const cachedData = sessionStorage.getItem('boldRoadmapData');
 
             if (cachedData) {
                 try {
                     data = JSON.parse(cachedData);
+                    populateFilterDropdown(); // Llena el filtro con las áreas cacheadas
                     renderProjects();
                     setTimeout(scrollToToday, 100);
                     renderTodayLine();
@@ -469,11 +568,10 @@
             try {
                 const noCacheUrl = sheetApiUrl + "?t=" + new Date().getTime();
                 const response = await fetch(noCacheUrl, { cache: "no-store" });
-                const freshData = await response.json();
-                
-                data = freshData;
+                data = await response.json();
                 sessionStorage.setItem('boldRoadmapData', JSON.stringify(data));
                 
+                populateFilterDropdown(); // Re-llena el filtro por si alguien agregó un área nueva
                 renderProjects();
                 renderTodayLine();
                 
@@ -483,7 +581,6 @@
                     syncToast.innerHTML = `✅ ¡Actualizado!`;
                     setTimeout(() => syncToast.classList.remove('show'), 2500);
                 }
-                
             } catch (error) {
                 console.error("Error sincronizando", error);
                 if (!cachedData) {

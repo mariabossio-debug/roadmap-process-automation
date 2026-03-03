@@ -48,7 +48,7 @@
 
         .main-container { padding: 25px 30px; }
 
-        .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         
         .tabs { display: flex; gap: 10px; }
         .tab { font-family: 'Montserrat', sans-serif; font-weight: 600; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.2s ease; }
@@ -57,11 +57,10 @@
         .right-controls { display: flex; align-items: center; gap: 15px; }
 
         /* ==========================================================================
-           NUEVO COMPONENTE: DROPDOWN DE FILTRO TIPO EXCEL
+           FILTRO TIPO EXCEL (AHORA TAMBIÉN FUNCIONA COMO LEYENDA DE COLORES)
            ========================================================================== */
         .custom-filter { position: relative; font-family: 'Montserrat', sans-serif; }
         
-        /* El Botón que abre el menú */
         .filter-btn {
             display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; 
             border: 1px solid var(--border-color); background-color: #fff; color: var(--bold-azul); 
@@ -71,22 +70,19 @@
         .filter-btn:hover { border-color: var(--bold-coral); }
         .filter-btn::after { content: '▼'; font-size: 10px; opacity: 0.6; }
 
-        /* El Panel del Menú (Oculto por defecto) */
         .filter-panel {
-            position: absolute; top: 110%; right: 0; background: #fff; width: 260px;
+            position: absolute; top: 110%; right: 0; background: #fff; width: 280px;
             border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); border: 1px solid var(--border-color);
             z-index: 1000; display: none; flex-direction: column; padding: 15px; box-sizing: border-box;
         }
         .filter-panel.show { display: flex; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Cabecera del Panel */
         .fp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .fp-title { font-size: 13px; color: #555; font-weight: 600; }
         .fp-clear { font-size: 12px; color: var(--bold-coral); cursor: pointer; font-weight: 600; }
         .fp-clear:hover { text-decoration: underline; }
 
-        /* Buscador del Panel */
         .fp-search-box { margin-bottom: 10px; }
         .fp-search-box input {
             width: 100%; padding: 8px 10px; border-radius: 4px; border: 1px solid #ccc;
@@ -94,22 +90,25 @@
         }
         .fp-search-box input:focus { border-color: var(--bold-azul); }
 
-        /* Lista de Checkboxes */
-        .fp-list { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 10px; }
+        .fp-list { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 10px; }
         .fp-list label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--bold-azul); cursor: pointer; font-weight: 500; }
         .fp-list input[type="checkbox"] { accent-color: var(--bold-coral); cursor: pointer; width: 14px; height: 14px; margin: 0;}
         
         .fp-select-all { padding-bottom: 8px; border-bottom: 1px solid var(--bold-gris-claro); margin-bottom: 8px; }
 
-        /* Botones de Acción */
         .fp-actions { display: flex; gap: 10px; }
         .fp-btn-ok { flex: 1; background: var(--bold-azul); color: white; border: none; padding: 8px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s;}
         .fp-btn-ok:hover { filter: brightness(1.2); }
         .fp-btn-cancel { flex: 1; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; padding: 8px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s;}
         .fp-btn-cancel:hover { background: #e0e0e0; }
 
+        /* SCROLLBAR CUSTOM PARA EL DROPDOWN DE FILTROS */
+        .fp-list::-webkit-scrollbar { width: 6px; }
+        .fp-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px;}
+        .fp-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px;}
+
         /* ==========================================================================
-           CONTROLES RESTANTES Y LEYENDAS
+           CONTROLES RESTANTES
            ========================================================================== */
         .view-toggle { display: flex; align-items: center; gap: 12px; background: #fff; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); color: var(--bold-azul); font-size: 13px; }
         #label-semanas { font-weight: 700; opacity: 1; transition: 0.3s; }
@@ -124,13 +123,31 @@
         input:checked + .slider { background-color: var(--bold-coral); }
         input:checked + .slider:before { transform: translateX(22px); }
 
-        .legend-container { display: flex; flex-wrap: wrap; align-items: center; gap: 15px; margin-bottom: 20px; padding: 12px 15px; background: #fff; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .legend-title { font-weight: 700; font-size: 13px; margin-right: 5px; color: var(--bold-azul); }
-        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #555;}
-        .legend-color { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
-
+        /* ==========================================================================
+           CALENDARIO Y GANTT CORE
+           ========================================================================== */
         .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; overflow-y: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
         
+        /* --------------------------------------------------------------------------
+           NUEVO SCROLLBAR ESTILIZADO CON TU COLOR #D2D4E1
+           -------------------------------------------------------------------------- */
+        .timeline-wrapper::-webkit-scrollbar {
+            height: 12px; /* Grosor de la barra horizontal */
+        }
+        .timeline-wrapper::-webkit-scrollbar-track {
+            background: var(--bold-blanco);
+            border-radius: 0 0 8px 8px;
+        }
+        .timeline-wrapper::-webkit-scrollbar-thumb {
+            background-color: #D2D4E1; /* Tu color escogido */
+            border-radius: 8px;
+            border: 2px solid var(--bold-blanco); /* Crea un efecto visual de relleno */
+        }
+        .timeline-wrapper::-webkit-scrollbar-thumb:hover {
+            background-color: #b8bbcc; /* Oscurece un poquito al pasar el mouse */
+        }
+        /* -------------------------------------------------------------------------- */
+
         .timeline-scroll-area { min-width: 3800px; position: relative; display: flex; flex-direction: column; transition: min-width 0.4s ease-out; }
         .timeline-scroll-area.monthly-view { min-width: 1400px; }
         .timeline-scroll-area.monthly-view .weeks-header { display: none; }
@@ -207,7 +224,7 @@
             <div class="right-controls">
                 
                 <div class="custom-filter" id="customFilter">
-                    <button class="filter-btn" id="filterBtnText" onclick="toggleFilterMenu()">Filtrar por Área</button>
+                    <button class="filter-btn" id="filterBtnText" onclick="toggleFilterMenu()">Áreas y Filtros</button>
                     
                     <div class="filter-panel" id="filterPanel">
                         <div class="fp-header">
@@ -215,7 +232,7 @@
                             <span class="fp-clear" onclick="clearFilter()">Limpiar</span>
                         </div>
                         <div class="fp-search-box">
-                            <input type="text" id="filterSearch" placeholder="Buscar..." onkeyup="searchFilter()">
+                            <input type="text" id="filterSearch" placeholder="Buscar área..." onkeyup="searchFilter()">
                         </div>
                         
                         <div class="fp-list">
@@ -244,19 +261,6 @@
             </div>
         </div>
 
-        <div class="legend-container">
-            <span class="legend-title">Convenciones de Áreas:</span>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-risk)"></span>Risk</div>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-financial)"></span>Financial</div>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-sales)"></span>Sales</div>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-human-talent)"></span>Human Talent</div>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-legal)"></span>Legal</div>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-cs)"></span>CS</div>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-logistica)"></span>Logística</div>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-hubs)"></span>Hubs</div>
-            <div class="legend-item"><span class="legend-color" style="background: var(--area-marketing)"></span>Marketing</div>
-        </div>
-
         <div class="timeline-wrapper">
             <div class="timeline-scroll-area" id="mainScrollArea">
                 <div class="quarters-header" id="quarters-header"></div>
@@ -282,7 +286,7 @@
 
         let currentTab = 'appian'; 
         let data = []; 
-        let selectedAreas = []; // Un arreglo vacío significa que TODO está seleccionado
+        let selectedAreas = []; 
 
         function normalizeText(text) {
             if (!text) return 'default';
@@ -290,31 +294,33 @@
         }
 
         // ==========================================================================
-        // LÓGICA DEL NUEVO FILTRO TIPO EXCEL
+        // LÓGICA DEL FILTRO Y LEYENDA INTEGRADA
         // ==========================================================================
-        
-        // 1. EXTRAE TODAS LAS ÁREAS DIRECTAMENTE DE GOOGLE SHEETS Y ARMA EL MENÚ
         function populateFilterDropdown() {
             const container = document.getElementById('filterOptionsContainer');
-            // Extrae áreas únicas, descarta vacíos y ordena alfabéticamente
             const uniqueAreas = [...new Set(data.map(p => p['Área'] ? p['Área'].toString().trim() : 'Sin Área').filter(a => a !== 'Sin Área'))].sort();
             
             let html = '';
             uniqueAreas.forEach(area => {
                 const normValue = normalizeText(area);
-                // Si la lista de seleccionados está vacía (todas) o incluye esta área, chulea la caja
                 const isChecked = selectedAreas.length === 0 || selectedAreas.includes(normValue) ? 'checked' : '';
-                html += `<label class="area-item"><input type="checkbox" class="area-checkbox" value="${normValue}" data-name="${area}" ${isChecked} onchange="updateSelectAllStatus()"> ${area}</label>`;
+                
+                // INYECCIÓN DEL COLOR PARA LA LEYENDA
+                let dotColor = `var(--area-${normValue}, var(--bold-azul))`;
+                if(normValue === 'default') dotColor = 'var(--area-default)';
+
+                html += `<label class="area-item">
+                            <input type="checkbox" class="area-checkbox" value="${normValue}" data-name="${area}" ${isChecked} onchange="updateSelectAllStatus()"> 
+                            <span style="width: 14px; height: 14px; border-radius: 50%; display: inline-block; background: ${dotColor}; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                            ${area}
+                         </label>`;
             });
             container.innerHTML = html;
             updateSelectAllStatus();
         }
 
-        function toggleFilterMenu() {
-            document.getElementById('filterPanel').classList.toggle('show');
-        }
-
-        // Cierra el menú si haces clic afuera
+        function toggleFilterMenu() { document.getElementById('filterPanel').classList.toggle('show'); }
+        
         document.addEventListener('click', function(event) {
             const filterElement = document.getElementById('customFilter');
             if (filterElement && !filterElement.contains(event.target)) {
@@ -325,10 +331,7 @@
         function toggleSelectAll(sourceCheckbox) {
             const checkboxes = document.querySelectorAll('.area-checkbox');
             checkboxes.forEach(cb => {
-                // Solo afecta a los que no estén ocultos por el buscador
-                if(cb.parentElement.style.display !== 'none') {
-                    cb.checked = sourceCheckbox.checked;
-                }
+                if(cb.parentElement.style.display !== 'none') cb.checked = sourceCheckbox.checked;
             });
         }
 
@@ -360,20 +363,19 @@
             const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
             
             if (checkedBoxes.length === checkboxes.length) {
-                selectedAreas = []; // Todas seleccionadas
-                document.getElementById('filterBtnText').innerText = 'Filtrar por Área';
+                selectedAreas = []; 
+                document.getElementById('filterBtnText').innerText = 'Áreas y Filtros';
             } else if (checkedBoxes.length === 0) {
-                selectedAreas = ['_none_']; // Ninguna seleccionada (Oculta todo)
-                document.getElementById('filterBtnText').innerText = 'Ninguna seleccionada';
+                selectedAreas = ['_none_']; 
+                document.getElementById('filterBtnText').innerText = 'Ninguna área seleccionada';
             } else {
                 selectedAreas = checkedBoxes.map(cb => cb.value);
                 if (checkedBoxes.length === 1) {
                     document.getElementById('filterBtnText').innerText = 'Área: ' + checkedBoxes[0].dataset.name;
                 } else {
-                    document.getElementById('filterBtnText').innerText = 'Áreas: Varias (' + checkedBoxes.length + ')';
+                    document.getElementById('filterBtnText').innerText = 'Filtro activo: Varias áreas';
                 }
             }
-            
             document.getElementById('filterPanel').classList.remove('show');
             renderProjects();
             setTimeout(scrollToToday, 100);
@@ -381,7 +383,7 @@
 
         function closeFilterMenu() {
             document.getElementById('filterPanel').classList.remove('show');
-            populateFilterDropdown(); // Restaura las casillas a como estaban antes de abrir
+            populateFilterDropdown(); 
         }
 
         // ==========================================================================
@@ -461,14 +463,10 @@
             if (!data || data.length === 0) return;
 
             let filteredData = data.filter(p => {
-                // 1. Filtrar por pestaña
                 const tabCategory = p['Frente de trabajo'] || p['Frente'] || p['Plataforma'] || p['Equipo'];
                 const matchesTab = tabCategory && tabCategory.toString().toLowerCase().trim() === currentTab;
-                
-                // 2. FILTRAR POR ÁREA (Nuevo sistema inteligente)
                 const areaValue = p['Área'] ? normalizeText(p['Área']) : 'default';
                 const matchesArea = selectedAreas.length === 0 || selectedAreas.includes(areaValue);
-
                 return matchesTab && matchesArea;
             });
 
@@ -488,6 +486,7 @@
             filteredData.forEach(project => {
                 const leftPos = getTimelinePosition(project['Fecha de Inicio']);
                 const rightPos = getTimelinePosition(project['Fecha de Fin']);
+                
                 if (leftPos === null || rightPos === null) return;
                 
                 let width = rightPos - leftPos;
@@ -495,28 +494,40 @@
                 if (rightPos > 0 && leftPos < 100) {
                     const bar = document.createElement('div');
                     bar.className = 'project-bar';
+                    
                     const areaKey = normalizeText(project['Área']);
+                    const rawArea = project['Área'] || 'No definida';
                     bar.setAttribute('data-area', areaKey);
                     
                     const displayLeft = Math.max(0, leftPos);
-                    const finalWidth = Math.min(width - (displayLeft - leftPos), 100 - displayLeft);
+                    const displayWidth = width - (displayLeft - leftPos);
+                    const finalWidth = Math.min(displayWidth, 100 - displayLeft);
 
                     bar.style.left = `${displayLeft}%`;
                     bar.style.width = `${finalWidth}%`;
-                    bar.style.background = areaKey === 'default' ? `var(--area-default)` : `var(--area-${areaKey}, var(--bold-azul))`;
+                    
+                    if (areaKey === 'default') {
+                        bar.style.background = `var(--area-default)`;
+                    } else {
+                        bar.style.background = `var(--area-${areaKey}, var(--bold-azul))`;
+                    }
 
                     const statusKey = normalizeText(project['Estado']);
                     const devName = project['Desarrollador'] || '';
                     const projName = project['Nombre del proyecto'] || 'Sin nombre';
 
+                    // NUEVO TOOLTIP CON LA INFORMACIÓN DEL ÁREA
+                    const tooltipText = `Proyecto: ${projName}\nÁrea: ${rawArea}\nEstado: ${project['Estado'] || 'No definido'}`;
+                    bar.setAttribute('title', tooltipText);
+
                     let iconHtml = '';
-                    if (statusKey === 'dev') iconHtml = `<img src="dev.png" class="status-icon" title="Estado: Dev">`;
-                    else if (statusKey === 'test') iconHtml = `<img src="test.png" class="status-icon" title="Estado: Test">`;
-                    else if (statusKey === 'prod') iconHtml = `<img src="prod.png" class="status-icon" title="Estado: Prod">`;
-                    else if (statusKey === 'piloto') iconHtml = `<img src="piloto1.png" class="status-icon piloto-icon" title="Estado: Piloto">`;
+                    if (statusKey === 'dev') iconHtml = `<img src="dev.png" class="status-icon">`;
+                    else if (statusKey === 'test') iconHtml = `<img src="test.png" class="status-icon">`;
+                    else if (statusKey === 'prod') iconHtml = `<img src="prod.png" class="status-icon">`;
+                    else if (statusKey === 'piloto') iconHtml = `<img src="piloto1.png" class="status-icon piloto-icon">`;
 
                     bar.innerHTML = `
-                        <span class="project-title" title="${projName}">${projName}</span>
+                        <span class="project-title">${projName}</span>
                         <div class="badges">
                             ${devName && devName.toLowerCase() !== 'n/a' ? `<span class="badge">${devName}</span>` : ''}
                             ${iconHtml}
@@ -525,14 +536,20 @@
                     
                     container.appendChild(bar);
 
-                    const visualRightPos = displayLeft + Math.max(finalWidth, (bar.offsetWidth / containerWidth) * 100);
+                    const actualWidthPx = bar.offsetWidth;
+                    const visualWidthPct = (actualWidthPx / containerWidth) * 100;
+                    const visualRightPos = displayLeft + Math.max(finalWidth, visualWidthPct);
+
                     let currentRow = 0;
-                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.2)) currentRow++;
+                    while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.2)) {
+                        currentRow++;
+                    }
                     
                     rowEndPositions[currentRow] = visualRightPos;
                     bar.style.top = `${currentRow * 40}px`; 
                 }
             });
+            
             container.style.height = `${rowEndPositions.length * 40 + 70}px`;
         }
 
@@ -553,7 +570,7 @@
             if (cachedData) {
                 try {
                     data = JSON.parse(cachedData);
-                    populateFilterDropdown(); // Llena el filtro con las áreas cacheadas
+                    populateFilterDropdown(); 
                     renderProjects();
                     setTimeout(scrollToToday, 100);
                     renderTodayLine();
@@ -571,7 +588,7 @@
                 data = await response.json();
                 sessionStorage.setItem('boldRoadmapData', JSON.stringify(data));
                 
-                populateFilterDropdown(); // Re-llena el filtro por si alguien agregó un área nueva
+                populateFilterDropdown(); 
                 renderProjects();
                 renderTodayLine();
                 

@@ -152,3 +152,26 @@ input:checked + .slider:before { transform: translateX(22px); }
 .loader-container { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 15px; color: var(--bold-azul); font-weight: 600; }
 .spinner-large { width: 40px; height: 40px; border: 4px solid var(--bold-gris-claro); border-top: 4px solid var(--bold-coral); border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ==========================================================================
+   SOLUCIÓN PARA VISTA DE MESES (TARJETAS MÁS GORDITAS EN 2 LÍNEAS)
+   ========================================================================== */
+.timeline-scroll-area.monthly-view .project-bar {
+    min-width: 0 !important;       /* Quita el "max-content" para respetar la fecha exacta de Yesenia */
+    height: 38px !important;       /* Hace la tarjeta más gordita para que quepa todo */
+    padding: 4px 10px !important; 
+}
+
+.timeline-scroll-area.monthly-view .project-title {
+    white-space: normal !important; /* Permite que el texto se rompa en 2 líneas */
+    line-height: 1.1;
+    font-size: 10px;               /* Letra ligeramente más pequeña para que encaje bien en 2 renglones */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;         
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.timeline-scroll-area.monthly-view .badges {
+    flex-shrink: 0 !important;      /* Protege a los íconos de developer y estado para que no se aplasten */
+}

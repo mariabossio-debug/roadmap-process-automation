@@ -171,7 +171,7 @@ function toggleViewMode() {
 function renderProjects() {
     const container = document.getElementById('projects-container');
     const scrollArea = document.getElementById('mainScrollArea');
-    container.innerHTML = ''; // Limpia el contenedor
+    container.innerHTML = ''; 
 
     if (!data || data.length === 0) return;
 
@@ -183,7 +183,6 @@ function renderProjects() {
         return matchesTab && matchesArea;
     });
 
-    // Ordenar proyectos
     filteredData.sort((a, b) => {
         const dateA = parseDateSafe(a['Fecha de Inicio'])?.getTime() || 0;
         const dateB = parseDateSafe(b['Fecha de Inicio'])?.getTime() || 0;
@@ -199,7 +198,11 @@ function renderProjects() {
     });
 
     const rowEndPositions = [];
-    const containerWidth = scrollArea.offsetWidth || 3800; // Ancho visual en pixeles
+    const containerWidth = scrollArea.offsetWidth || 3800; 
+    
+    // MAGIA: Si estamos en meses, la fila necesita más altura porque la tarjeta es más gordita
+    const isMonthly = scrollArea.classList.contains('monthly-view');
+    const rowSpacing = isMonthly ? 55 : 40; 
 
     filteredData.forEach(project => {
         const leftPos = getTimelinePosition(project['Fecha de Inicio']);
@@ -207,45 +210,35 @@ function renderProjects() {
         
         if (leftPos === null || rightPos === null) return;
         
-        let widthPct = rightPos - leftPos;
+        let width = rightPos - leftPos;
         
         if (rightPos > 0 && leftPos < 100) {
-            // NUEVO: Contenedor para el proyecto
-            const wrapper = document.createElement('div');
-            wrapper.className = 'project-wrapper';
-            const areaKey = normalizeText(project['Área']);
-            wrapper.setAttribute('data-area', areaKey); // Put it here for label styling
-
-            // Posicionar el contenedor
-            const displayLeft = Math.max(0, leftPos);
-            wrapper.style.left = `${displayLeft}%`;
-
-            // NUEVO: La barra de color (estricta)
             const bar = document.createElement('div');
-            bar.className = 'project-bar-strict';
-            bar.style.width = `${widthPct}%`; // Strict width based on dates
+            bar.className = 'project-bar'; // <-- Volvemos a tu clase original perfecta
             
+            const areaKey = normalizeText(project['Área']);
             const rawArea = project['Área'] || 'No definida';
             bar.setAttribute('data-area', areaKey);
+            
+            const displayLeft = Math.max(0, leftPos);
+            const displayWidth = width - (displayLeft - leftPos);
+            const finalWidth = Math.min(displayWidth, 100 - displayLeft);
+
+            bar.style.left = `${displayLeft}%`;
+            bar.style.width = `${finalWidth}%`;
             
             if (areaKey === 'default') {
                 bar.style.background = `var(--area-default)`;
             } else {
                 bar.style.background = `var(--area-${areaKey}, var(--bold-azul))`;
             }
-            wrapper.appendChild(bar); // Añadir la barra al wrapper
 
-            // NUEVO: La etiqueta de texto y badges (fuera de la barra en decoupled)
-            const label = document.createElement('div');
-            label.className = 'project-label';
-            label.setAttribute('data-area', areaKey); // Put it here too for label styling
-            
             const statusKey = normalizeText(project['Estado']);
             const devName = project['Desarrollador'] || '';
             const projName = project['Nombre del proyecto'] || 'Sin nombre';
 
             const tooltipText = `Proyecto: ${projName}\nÁrea: ${rawArea}\nEstado: ${project['Estado'] || 'No definido'}`;
-            label.setAttribute('title', tooltipText); // Poner tooltip en la etiqueta
+            bar.setAttribute('title', tooltipText);
 
             let iconHtml = '';
             if (statusKey === 'dev') iconHtml = `<img src="assets/dev.png" class="status-icon">`;
@@ -253,36 +246,42 @@ function renderProjects() {
             else if (statusKey === 'prod') iconHtml = `<img src="assets/prod.png" class="status-icon">`;
             else if (statusKey === 'piloto') iconHtml = `<img src="assets/piloto1.png" class="status-icon piloto-icon">`;
 
-            label.innerHTML = `
+            bar.innerHTML = `
                 <span class="project-title">${projName}</span>
                 <div class="badges">
                     ${devName && devName.toLowerCase() !== 'n/a' ? `<span class="badge">${devName}</span>` : ''}
                     ${iconHtml}
                 </div>
             `;
-            wrapper.appendChild(label); // Añadir la etiqueta al wrapper
+            
+            container.appendChild(bar);
 
-            container.appendChild(wrapper);
+            const actualWidthPx = bar.offsetWidth;
+            const visualWidthPct = (actualWidthPx / containerWidth) * 100;
+            const visualRightPos = displayLeft + Math.max(finalWidth, visualWidthPct);
 
-            // NUEVO: Lógica de apilamiento mejorada.
-            // La posición final visual es el final del label.
-            const actualLabelWidthPx = label.offsetWidth;
-            const visualLabelWidthPct = (actualLabelWidthPx / containerWidth) * 100;
-            const visualEndPct = displayLeft + visualLabelWidthPct;
-
-            // Lógica de apilamiento
             let currentRow = 0;
             while (rowEndPositions[currentRow] !== undefined && rowEndPositions[currentRow] > (displayLeft - 0.2)) {
                 currentRow++;
             }
             
-            rowEndPositions[currentRow] = visualEndPct;
-            wrapper.style.top = `${currentRow * 40}px`; // 40px de espacio vertical por fila (barra de 30px + 10px de margen)
+            rowEndPositions[currentRow] = visualRightPos;
+            bar.style.top = `${currentRow * rowSpacing}px`; 
         }
     });
     
-    // Ajustar la altura del contenedor principal
-    container.style.height = `${rowEndPositions.length * 40 + 70}px`;
+    container.style.height = `${rowEndPositions.length * rowSpacing + 70}px`;
+}
+
+function switchTab(team) {
+    currentTab = team.toLowerCase().trim(); 
+    document.querySelectorAll('.tab').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.innerText.toLowerCase().includes(currentTab) || btn.innerText.toLowerCase() === currentTab) {
+            btn.classList.add('active');
+        }
+    });
+    renderProjects();
 }
 
 async function loadDataAndRender() {

@@ -42,9 +42,6 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 
 .main-container { padding: 25px 30px; }
 
-/* ==========================================================================
-   CONTROLES, PESTAÑAS Y LEYENDA DE ESTADOS
-   ========================================================================== */
 .controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
 .left-controls { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 .right-controls { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
@@ -59,11 +56,7 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 .sl-icon { height: 16px; width: auto; filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%); }
 .sl-piloto { transform: scale(1.15); }
 
-/* ==========================================================================
-   FILTRO TIPO EXCEL / LEYENDA DE ÁREAS
-   ========================================================================== */
 .custom-filter { position: relative; font-family: 'Montserrat', sans-serif; }
-
 .filter-btn { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); background-color: #fff; color: var(--bold-azul); font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s ease; }
 .filter-btn:hover { border-color: var(--bold-coral); }
 .filter-btn::after { content: '▼'; font-size: 10px; opacity: 0.6; }
@@ -84,7 +77,6 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 .fp-list { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 10px; }
 .fp-list label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--bold-azul); cursor: pointer; font-weight: 500; }
 .fp-list input[type="checkbox"] { accent-color: var(--bold-coral); cursor: pointer; width: 14px; height: 14px; margin: 0;}
-
 .fp-select-all { padding-bottom: 8px; border-bottom: 1px solid var(--bold-gris-claro); margin-bottom: 8px; }
 
 .fp-actions { display: flex; gap: 10px; }
@@ -97,7 +89,6 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 .fp-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px;}
 .fp-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px;}
 
-/* TOGGLE SEMANAS / MESES */
 .view-toggle { display: flex; align-items: center; gap: 12px; background: #fff; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); color: var(--bold-azul); font-size: 13px; }
 #label-semanas { font-weight: 700; opacity: 1; transition: 0.3s; }
 #label-meses { font-weight: 400; opacity: 0.5; transition: 0.3s; }
@@ -111,11 +102,7 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 input:checked + .slider { background-color: var(--bold-coral); }
 input:checked + .slider:before { transform: translateX(22px); }
 
-/* ==========================================================================
-   CALENDARIO Y GANTT CORE
-   ========================================================================== */
 .timeline-wrapper { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0; overflow-x: auto; overflow-y: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
-
 .timeline-wrapper::-webkit-scrollbar { height: 12px; }
 .timeline-wrapper::-webkit-scrollbar-track { background: var(--bold-blanco); border-radius: 0 0 8px 8px; }
 .timeline-wrapper::-webkit-scrollbar-thumb { background-color: #D2D4E1; border-radius: 8px; border: 2px solid var(--bold-blanco); }
@@ -142,142 +129,19 @@ input:checked + .slider:before { transform: translateX(22px); }
 .grid-month-container .grid-week:last-child { border-right: none; }
 
 .projects-area { position: relative; margin-top: 25px; padding-bottom: 50px; min-height: 300px; z-index: 1; }
+.project-bar { position: absolute; height: 30px; border-radius: 15px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; color: white; font-size: 11.5px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.15); box-sizing: border-box; gap: 10px; min-width: max-content; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.project-bar:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.25); z-index: 100 !important; cursor: default; }
 
-/* ==========================================================================
-   CÁPSULAS DE PROYECTOS - BASE BEHAVIOR
-   ========================================================================= */
-
-.project-wrapper {
-    position: absolute;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: default;
-}
-
-/* Hover state on the wrapper, affecting bar and label */
-.project-wrapper:hover {
-    transform: translateY(-2px);
-    z-index: 100 !important;
-}
-
-/* Base styles for the colored bar */
-.project-bar-strict {
-    height: 100%;
-    border-radius: 15px; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    flex-shrink: 0; /* Important: do not squash the bar */
-}
-
-/* Base styles for the label (text + badges) */
-.project-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11.5px;
-    font-weight: 600;
-    white-space: nowrap;
-    box-sizing: border-box;
-    gap: 10px;
-    color: white; /* Base color for coupled labels on dark bars */
-    transition: opacity 0.2s ease, border-radius 0.2s ease;
-}
-
-.project-title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Pone los puntos suspensivos (...) */
-    flex-grow: 1;             /* Empuja los iconos de desarrollador/estado a la derecha */
-}
-
-/* El flex-shrink: 0 garantiza que los íconos de estado y nombre jamás se apachurren */
-.badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; } 
+.project-title { white-space: nowrap; }
+.badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
 .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
 .status-icon { height: 18px; width: auto; display: inline-block; margin-left: 4px; filter: brightness(0) invert(1); }
 .status-icon.piloto-icon { transform: scale(1.15); }
 
-/* ==========================================================================
-   GANTT VIEWS CONFIGURATIONS (WEEKLY VS MONTHLY DECOUPLED)
-   ========================================================================== */
+.project-bar[data-area="legal-y-cumplimiento"], .project-bar[data-area="sci"], .project-bar[data-area="procurement"], .project-bar[data-area="human-ops"] { color: var(--bold-azul); }
+.project-bar[data-area="legal-y-cumplimiento"] .badge, .project-bar[data-area="sci"] .badge, .project-bar[data-area="procurement"] .badge, .project-bar[data-area="human-ops"] .badge { background: rgba(0,0,0,0.08); color: var(--bold-azul); }
+.project-bar[data-area="legal-y-cumplimiento"] .status-icon, .project-bar[data-area="sci"] .status-icon, .project-bar[data-area="procurement"] .status-icon, .project-bar[data-area="human-ops"] .status-icon { filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%); }
 
-/* --------------------------------------------------------------------------
-   Weekly View - Default Behavior: Label inside the strict date bar
-   -------------------------------------------------------------------------- */
-.timeline-scroll-area:not(.monthly-view) .project-bar-strict {
-    width: 100%; /* Sized by the wrapper. This is strict to the dates. */
-}
-
-.timeline-scroll-area:not(.monthly-view) .project-label {
-    position: absolute; /* Revert base behavior, text must be on top of bar */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 0 12px;
-}
-
-/* Weekly View Light Area color exceptions, applying light text styles to .project-label */
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="legal-y-cumplimiento"] .project-label,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="sci"] .project-label,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="procurement"] .project-label,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="human-ops"] .project-label {
-    color: var(--bold-azul);
-}
-
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="legal-y-cumplimiento"] .badge,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="sci"] .badge,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="procurement"] .badge,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="human-ops"] .badge {
-    background: rgba(0,0,0,0.08);
-    color: var(--bold-azul);
-}
-
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="legal-y-cumplimiento"] .status-icon,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="sci"] .status-icon,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="procurement"] .status-icon,
-.timeline-scroll-area:not(.monthly-view) .project-wrapper[data-area="human-ops"] .status-icon {
-    filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%);
-}
-
-/* --------------------------------------------------------------------------
-   Monthly View - Decoupled Behavior: Math strict bar, readable label outside
-   -------------------------------------------------------------------------- */
-
-.timeline-scroll-area.monthly-view .project-wrapper {
-    /* Stacking logic handles vertical and horizontal end. The wrapper is
-       sized by its full label content horizontally. */
-    width: auto !important; /* Wrapper is sized by content */
-    display: flex; /* Sibling alignment for coupled meet points */
-    overflow: visible; /* To see the label outside */
-}
-
-/* Meeting radius logic base. Left radius from shared logic. Right is 0 for meet point */
-.timeline-scroll-area.monthly-view .project-bar-strict {
-    border-radius: 15px 0 0 15px; /* meeting point logic */
-}
-
-.timeline-scroll-area.monthly-view .project-label {
-    position: static; /* Base behavior: flex item */
-    padding: 0 12px 0 6px; /* Less left padding since bar is there. Meeting point padding. */
-    color: var(--bold-azul); /* Overwrite default shared behavior 'white'. Decoupled text is always dark */
-    text-shadow: 1px 1px 2px rgba(255,255,255,0.8); /* subtle shadow for readability on grid lines */
-    border-radius: 0 15px 15px 0; /* meeting point radius */
-}
-
-/* Monthly view decoupled light area label exception: Revert dark text color from base monthly rule */
-/* This ensures light area text remains dark on decoupled labels. It has a higher specificity. */
-.timeline-scroll-area.monthly-view .project-wrapper[data-area="legal-y-cumplimiento"] .project-label,
-.timeline-scroll-area.monthly-view .project-wrapper[data-area="sci"] .project-label,
-.timeline-scroll-area.monthly-view .project-wrapper[data-area="procurement"] .project-label,
-.timeline-scroll-area.monthly-view .project-wrapper[data-area="human-ops"] .project-label {
-    color: var(--bold-azul) !important; /* Overwrite light area exception from global styles */
-}
-
-/* ==========================================================================
-   SHARED GANTT ELEMENTS
-   ========================================================================== */
 .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background-color: var(--bold-coral); z-index: 20; pointer-events: none;}
 .today-label { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: var(--bold-coral); color: white; padding: 5px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.25);}
 
@@ -288,3 +152,21 @@ input:checked + .slider:before { transform: translateX(22px); }
 .loader-container { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 15px; color: var(--bold-azul); font-weight: 600; }
 .spinner-large { width: 40px; height: 40px; border: 4px solid var(--bold-gris-claro); border-top: 4px solid var(--bold-coral); border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ==========================================================================
+   LA SOLUCIÓN EXACTA A MESES: TARJETAS MÁS ALTAS EN 2 LÍNEAS
+   ========================================================================== */
+.timeline-scroll-area.monthly-view .project-bar {
+    height: 48px !important;       /* Tarjetas más gorditas hacia arriba */
+    align-items: center;           
+}
+
+.timeline-scroll-area.monthly-view .project-title {
+    white-space: normal !important; /* Permite el salto de línea */
+    line-height: 1.2;              
+    max-width: 150px;              /* ¡LA MAGIA! Fuerza al texto a saltar de línea para que la tarjeta no se alargue tanto hacia los lados */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;         /* Obliga a usar máximo 2 renglones */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

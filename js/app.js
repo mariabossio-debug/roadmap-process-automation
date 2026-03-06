@@ -1,8 +1,8 @@
 const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AEBaoxhSCNg-5MNZvVb2_xQHI8hJVfvR0dd8IIPgd4A4GCMWWk/exec'; 
 
 const wStart = new Date(2026, 0, 1, 0, 0, 0);
-const wEnd = new Date(2026, 11, 31, 23, 59, 59);
-const totalDays = (wEnd - wStart) / (1000 * 60 * 60 * 24);
+// Usamos 365 días exactos para evitar decimales que desfasen los cálculos
+const totalDays = 365; 
 
 let currentTab = 'appian'; 
 let data = []; 
@@ -127,37 +127,40 @@ function renderCalendarHeaders() {
 }
 
 // =========================================================================
-// CORRECCIÓN: BORRADOR DE HORAS PARA ALINEACIÓN PERFECTA DE FECHAS
+// CORRECCIÓN MAGISTRAL: "LA APLANADORA DE FECHAS"
 // =========================================================================
 function parseDateSafe(dateValue) {
     if (!dateValue) return null;
-    let d;
     const str = dateValue.toString().trim();
-    const match = str.match(/(\d{4})-(\d{2})-(\d{2})/);
     
-    if (match) {
-        // Si viene en formato YYYY-MM-DD, forzamos las 00:00:00
-        d = new Date(match[1], match[2] - 1, match[3], 0, 0, 0);
-    } else {
-        // Cualquier otro formato, lo convertimos y forzamos a la medianoche
-        d = new Date(str);
-        d.setHours(0, 0, 0, 0);
+    // 1. Detección a prueba de balas para formato Latino (DD/MM/YYYY)
+    const parts = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if (parts) {
+        return new Date(parts[3], parts[2] - 1, parts[1], 0, 0, 0);
     }
-    
-    return isNaN(d.getTime()) ? null : d;
+
+    // 2. Parseo estándar si viene en otro formato
+    const temp = new Date(str);
+    if (isNaN(temp.getTime())) return null;
+
+    // 3. ¡LA MAGIA!: Extraemos SOLO el año, mes y día limpios, y clavamos la hora a las 00:00:00 exactas.
+    // Esto borra por completo cualquier "hora fantasma" que traiga Google Sheets.
+    return new Date(temp.getFullYear(), temp.getMonth(), temp.getDate(), 0, 0, 0);
 }
 
 function getTimelinePosition(dateValue) {
     const date = parseDateSafe(dateValue);
     if (!date) return null;
-    return ((date - wStart) / (1000 * 60 * 60 * 24) / totalDays) * 100; 
+    return ((date.getTime() - wStart.getTime()) / (1000 * 60 * 60 * 24) / totalDays) * 100; 
 }
 
 function renderTodayLine() {
     const today = new Date(); 
-    today.setHours(0, 0, 0, 0); // También forzamos "hoy" a la medianoche para ser consistentes
-    const formattedToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    const todayPercentage = getTimelinePosition(formattedToday);
+    // Aplanamos también la línea roja de "Hoy" a las 00:00:00 para que todo empate al milímetro
+    const flatToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
+    
+    const todayPercentage = ((flatToday.getTime() - wStart.getTime()) / (1000 * 60 * 60 * 24) / totalDays) * 100; 
+    
     const todayMarker = document.getElementById('today-marker');
     if (todayPercentage >= 0 && todayPercentage <= 100) {
         todayMarker.style.left = `${todayPercentage}%`;
@@ -166,6 +169,7 @@ function renderTodayLine() {
         todayMarker.style.display = 'none';
     }
 }
+// =========================================================================
 
 function scrollToToday() {
     const wrapper = document.querySelector('.timeline-wrapper');

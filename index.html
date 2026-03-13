@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="assets/logo-blanco-ball.png">
     
 
-<link rel="stylesheet" href="css/style.css?v=6">
+<link rel="stylesheet" href="css/style.css?v=7">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,50 +25,58 @@
 
     <div class="main-container">
         
-        <div class="controls-header">
+       <div class="controls-header">
+            
             <div class="left-controls">
-    <div class="tabs-container" style="display: flex; flex-direction: column; gap: 8px;">
-        <div class="tabs">
-            <button class="tab active" id="tab-appian" onclick="switchMainTab('appian')">Appian</button>
-            <button class="tab" id="tab-automation" onclick="switchMainTab('automation')">Automation IA</button>
-        </div>
-        <div class="sub-tabs" id="sub-tabs-automation" style="display: none;">
-            <button class="sub-tab active" id="sub-tab-automation-ia" onclick="switchSubTab('automation ia')">Roadmap IA</button>
-            <button class="sub-tab" id="sub-tab-wsnh" onclick="switchSubTab('wsnh')">Campaña WSNH</button>
-        </div>
-    </div>
-</div>
                 
+                <div class="tabs-container" style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="tabs">
+                        <button class="tab active" id="tab-appian" onclick="switchMainTab('appian')">Appian</button>
+                        <button class="tab" id="tab-automation" onclick="switchMainTab('automation')">Automation IA</button>
+                    </div>
+                    
+                    <div class="sub-tabs" id="sub-tabs-automation" style="display: none;">
+                        <button class="sub-tab active" id="sub-tab-automation-ia" onclick="switchSubTab('automation ia')">Roadmap IA</button>
+                        <button class="sub-tab" id="sub-tab-wsnh" onclick="switchSubTab('wsnh')">Campaña WSNH</button>
+                    </div>
+                </div>
+
                 <div class="status-legend">
                     <span class="sl-title">Estados:</span>
-                    <div class="sl-item"><img src="assets/dev.png" class="sl-icon" alt="Dev"> Dev</div>
-                    <div class="sl-item"><img src="assets/test.png" class="sl-icon" alt="Test"> Test</div>
-                    <div class="sl-item"><img src="assets/piloto1.png" class="sl-icon sl-piloto" alt="Piloto"> Piloto</div>
-                    <div class="sl-item"><img src="assets/prod.png" class="sl-icon" alt="Prod"> Prod</div>
+                    <div class="sl-item"><img src="assets/dev.png" class="sl-icon"> Dev</div>
+                    <div class="sl-item"><img src="assets/test.png" class="sl-icon"> Test</div>
+                    <div class="sl-item"><img src="assets/piloto1.png" class="sl-icon sl-piloto"> Piloto</div>
+                    <div class="sl-item"><img src="assets/prod.png" class="sl-icon"> Prod</div>
                 </div>
+
             </div>
-            
+
             <div class="right-controls">
+                
                 <div class="custom-filter" id="customFilter">
-                    <button class="filter-btn" id="filterBtnText" onclick="toggleFilterMenu()">Áreas y Filtros</button>
+                    <div class="filter-btn" onclick="toggleFilterMenu()">
+                        <span id="filterBtnText">Áreas y Filtros</span>
+                    </div>
+                    
                     <div class="filter-panel" id="filterPanel">
                         <div class="fp-header">
-                            <span class="fp-title">Filtrar por:</span>
+                            <span class="fp-title">Filtrar por Área</span>
                             <span class="fp-clear" onclick="clearFilter()">Limpiar</span>
                         </div>
                         <div class="fp-search-box">
                             <input type="text" id="filterSearch" placeholder="Buscar área..." onkeyup="searchFilter()">
                         </div>
-                        <div class="fp-list">
-                            <label class="fp-select-all">
-                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" checked>
-                                <b>(Seleccionar todo)</b>
+                        <div class="fp-select-all">
+                            <label>
+                                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                                <span style="font-weight: 700; color: #555;">Seleccionar Todas</span>
                             </label>
-                            <div id="filterOptionsContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
                         </div>
+                        <div class="fp-list" id="filterOptionsContainer">
+                            </div>
                         <div class="fp-actions">
-                            <button class="fp-btn-ok" onclick="applyFilter()">OK</button>
                             <button class="fp-btn-cancel" onclick="closeFilterMenu()">Cancelar</button>
+                            <button class="fp-btn-ok" onclick="applyFilter()">Aplicar Filtro</button>
                         </div>
                     </div>
                 </div>
@@ -81,6 +89,7 @@
                     </label>
                     <span id="label-meses">Meses</span>
                 </div>
+
             </div>
         </div>
 

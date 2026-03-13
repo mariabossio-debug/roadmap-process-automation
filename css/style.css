@@ -31,15 +31,14 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 
 .main-container { padding: 25px 30px; }
 
+/* LAYOUT DE CONTROLES REPARADO */
 .controls-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
 .left-controls { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
-.right-controls { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; margin-top: 5px;}
+.right-controls { display: flex; align-items: flex-start; gap: 15px; flex-wrap: wrap; }
 
-/* ==========================================================================
-   TABS PRINCIPALES Y SUB-TABS
-   ========================================================================== */
+/* TABS PRINCIPALES Y SUB-TABS */
 .tabs { display: flex; gap: 10px; }
-.tab { font-family: 'Montserrat', sans-serif; font-weight: 600; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.2s ease; }
+.tab { font-family: 'Montserrat', sans-serif; font-weight: 600; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.2s ease; height: 38px; }
 .tab.active { background: var(--bold-coral); color: #fff; box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2); }
 
 .sub-tabs { display: flex; gap: 8px; margin-left: 2px; animation: fadeIn 0.3s ease; }
@@ -47,16 +46,15 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 .sub-tab:hover { background: #d2d8e9; }
 .sub-tab.active { background: var(--bold-azul); color: white; box-shadow: 0 2px 4px rgba(18, 30, 108, 0.2); }
 
-/* ========================================================================== */
-
-.status-legend { display: flex; align-items: center; gap: 15px; font-size: 12px; font-weight: 600; color: var(--bold-azul); background: #fff; padding: 8px 15px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); height: fit-content; margin-top: 5px; }
+/* ESTADOS, FILTROS Y TOGGLES (Alineados a la altura de los Tabs principales) */
+.status-legend { display: flex; align-items: center; gap: 15px; font-size: 12px; font-weight: 600; color: var(--bold-azul); background: #fff; padding: 0 15px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); height: 38px; }
 .sl-title { font-weight: 700; margin-right: 5px; color: #555; }
 .sl-item { display: flex; align-items: center; gap: 6px; }
 .sl-icon { height: 16px; width: auto; filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%); }
 .sl-piloto { transform: scale(1.15); }
 
 .custom-filter { position: relative; font-family: 'Montserrat', sans-serif; }
-.filter-btn { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); background-color: #fff; color: var(--bold-azul); font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s ease; }
+.filter-btn { display: flex; align-items: center; gap: 8px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--border-color); background-color: #fff; color: var(--bold-azul); font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s ease; height: 38px; }
 .filter-btn:hover { border-color: var(--bold-coral); }
 .filter-btn::after { content: '▼'; font-size: 10px; opacity: 0.6; }
 
@@ -84,7 +82,7 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 .fp-btn-cancel { flex: 1; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; padding: 8px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s;}
 .fp-btn-cancel:hover { background: #e0e0e0; }
 
-.view-toggle { display: flex; align-items: center; gap: 12px; background: #fff; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); color: var(--bold-azul); font-size: 13px; }
+.view-toggle { display: flex; align-items: center; gap: 12px; background: #fff; padding: 0 16px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); color: var(--bold-azul); font-size: 13px; height: 38px;}
 #label-semanas { font-weight: 700; opacity: 1; transition: 0.3s; }
 #label-meses { font-weight: 400; opacity: 0.5; transition: 0.3s; }
 .view-toggle.monthly-active #label-semanas { font-weight: 400; opacity: 0.5; }

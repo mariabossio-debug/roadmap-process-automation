@@ -17,7 +17,6 @@
     --area-credito: #5B3100; --area-partners: #A16B00; --area-sales-ops: #6CDCAB;
     --area-smb: #1E1E1E; --area-inbound: #606060; --area-cx: #969696;
     --area-sci: #FBF3F5; --area-procurement: #FFF3D1; --area-human-ops: #F3F3F3;
-    
     --area-peru: #8E44AD;
     
     --area-default: linear-gradient(135deg, #d00030 0%, #00308f 100%); 
@@ -32,15 +31,25 @@ body { font-family: 'Montserrat', sans-serif; font-weight: 400; background-color
 
 .main-container { padding: 25px 30px; }
 
-.controls-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
-.left-controls { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.right-controls { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+.controls-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+.left-controls { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.right-controls { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; margin-top: 5px;}
 
+/* ==========================================================================
+   TABS PRINCIPALES Y SUB-TABS
+   ========================================================================== */
 .tabs { display: flex; gap: 10px; }
 .tab { font-family: 'Montserrat', sans-serif; font-weight: 600; padding: 10px 25px; cursor: pointer; border-radius: 6px; background: var(--bold-gris-claro); color: var(--bold-azul); border: none; transition: all 0.2s ease; }
 .tab.active { background: var(--bold-coral); color: #fff; box-shadow: 0 4px 6px rgba(255, 40, 71, 0.2); }
 
-.status-legend { display: flex; align-items: center; gap: 15px; font-size: 12px; font-weight: 600; color: var(--bold-azul); background: #fff; padding: 8px 15px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+.sub-tabs { display: flex; gap: 8px; margin-left: 2px; animation: fadeIn 0.3s ease; }
+.sub-tab { font-family: 'Montserrat', sans-serif; font-weight: 600; padding: 6px 18px; font-size: 11px; cursor: pointer; border-radius: 20px; background: #E4E8F3; color: var(--bold-azul); border: none; transition: all 0.2s ease; }
+.sub-tab:hover { background: #d2d8e9; }
+.sub-tab.active { background: var(--bold-azul); color: white; box-shadow: 0 2px 4px rgba(18, 30, 108, 0.2); }
+
+/* ========================================================================== */
+
+.status-legend { display: flex; align-items: center; gap: 15px; font-size: 12px; font-weight: 600; color: var(--bold-azul); background: #fff; padding: 8px 15px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 5px rgba(0,0,0,0.02); height: fit-content; margin-top: 5px; }
 .sl-title { font-weight: 700; margin-right: 5px; color: #555; }
 .sl-item { display: flex; align-items: center; gap: 6px; }
 .sl-icon { height: 16px; width: auto; filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%); }
@@ -116,9 +125,6 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 .projects-area { position: relative; margin-top: 35px; padding-bottom: 50px; min-height: 300px; z-index: 1; }
 
-/* ==========================================================================
-   DISEÑO BASE DE LAS BARRAS (Universales)
-   ========================================================================== */
 .project-bar { 
     position: absolute; 
     height: 42px; 
@@ -147,22 +153,16 @@ input:checked + .slider:before { transform: translateX(22px); }
     padding-right: 10px; 
 }
 
-/* COMPONENTES APPIAN (Clásicos) */
 .badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
 .badge { padding: 3px 8px; border-radius: 12px; font-size: 9px; background: rgba(255,255,255,0.25); font-weight: 600;}
 
 .status-icon { height: 18px; width: auto; display: inline-block; margin-left: 4px; filter: brightness(0) invert(1); }
 .status-icon.piloto-icon { transform: scale(1.15); }
 
-/* EXCEPCIONES PARA ÁREAS CLARAS */
 .project-bar[data-area="legal-y-cumplimiento"], .project-bar[data-area="sci"], .project-bar[data-area="procurement"], .project-bar[data-area="human-ops"] { color: var(--bold-azul); }
 .project-bar[data-area="legal-y-cumplimiento"] .badge, .project-bar[data-area="sci"] .badge, .project-bar[data-area="procurement"] .badge, .project-bar[data-area="human-ops"] .badge { background: rgba(0,0,0,0.08); color: var(--bold-azul); }
 .project-bar[data-area="legal-y-cumplimiento"] .status-icon, .project-bar[data-area="sci"] .status-icon, .project-bar[data-area="procurement"] .status-icon, .project-bar[data-area="human-ops"] .status-icon { filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%); }
 
-
-/* ==========================================================================
-   SISTEMA DE BURBUJAS DE NOTIFICACIÓN PERFECTAMENTE PROPORCIONADO
-   ========================================================================== */
 .floating-bubbles {
     position: absolute;
     top: -10px;    
@@ -184,30 +184,21 @@ input:checked + .slider:before { transform: translateX(22px); }
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     border: 1px solid var(--bold-gris-claro);
     box-sizing: border-box;
-    padding: 0 4px; /* Padding ajustado para que los íconos respiren */
-    transition: transform 0.2s ease; /* Efecto premium al pasar el mouse */
+    padding: 0 4px; 
+    transition: transform 0.2s ease; 
 }
-.bubble:hover {
-    transform: scale(1.1);
-}
+.bubble:hover { transform: scale(1.1); }
 
-/* 1. Logos de Apps (Ajustados para perfecta legibilidad) */
-.app-bubble img {
-    max-height: 12px; /* Reducido un pelín para que no se vea tosco */
-    max-width: 16px; 
-    object-fit: contain;
-}
+.app-bubble img { max-height: 12px; max-width: 16px; object-fit: contain; }
 
-/* 2. Iconos de Estado (Alineados milimétricamente con el resto) */
 .bubble .status-icon {
-    height: 13px !important; /* Altura perfecta para competir con la letra 'W' */
+    height: 13px !important; 
     width: auto !important;
-    margin: 0 !important; /* Quita el margin heredado de Appian */
+    margin: 0 !important; 
     filter: brightness(0) invert(12%) sepia(35%) saturate(5412%) hue-rotate(227deg) brightness(90%) contrast(106%) !important;
 }
 .bubble .piloto-icon { transform: scale(1.1) !important; }
 
-/* 3. Burbuja del Desarrollador */
 .dev-bubble {
     max-width: 22px; 
     padding: 0;
@@ -216,15 +207,13 @@ input:checked + .slider:before { transform: translateX(22px); }
     position: relative;
     cursor: default;
 }
-.dev-bubble:hover {
-    max-width: 120px; 
-}
+.dev-bubble:hover { max-width: 120px; }
 
 .dev-initial {
     position: absolute;
     font-weight: 800;
     color: var(--bold-azul);
-    font-size: 11px; /* Mismo peso visual que los iconos de 13px */
+    font-size: 11px; 
     transition: opacity 0.2s ease;
 }
 
@@ -240,9 +229,6 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 .dev-bubble:hover .dev-initial { opacity: 0; }
 .dev-bubble:hover .dev-full { opacity: 1; }
-
-
-/* ========================================================================== */
 
 .today-line { position: absolute; top: 0; bottom: 0; width: 2px; background-color: var(--bold-coral); z-index: 20; pointer-events: none;}
 .today-label { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: var(--bold-coral); color: white; padding: 5px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.25);}

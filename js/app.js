@@ -253,7 +253,7 @@ function renderProjects() {
             const devName = project['Desarrollador'] || '';
 
             if (isAppianStyle) {
-                // APPIAN
+                // RENDERIZADO APPIAN (Clásico)
                 bar.innerHTML = `
                     <span class="project-title">${projName}</span>
                     <div class="badges">
@@ -262,7 +262,7 @@ function renderProjects() {
                     </div>
                 `;
             } else {
-                // AUTOMATION IA & WSNH (Burbujas)
+                // RENDERIZADO AUTOMATION IA & WSNH (Burbujas Flotantes)
                 const appRaw = project['Aplicativo'] ? project['Aplicativo'].toString().toLowerCase() : '';
                 let appBubbles = '';
                 if (appRaw.includes('dapta')) appBubbles += `<div class="bubble app-bubble"><img src="assets/dapta-logo.png" title="Dapta"></div>`;
@@ -283,6 +283,7 @@ function renderProjects() {
                     `;
                 }
 
+                // ORDEN ESTRICTO: Estado -> Aplicativos -> Desarrollador
                 bar.innerHTML = `
                     <span class="project-title">${projName}</span>
                     <div class="floating-bubbles">

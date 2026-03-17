@@ -1,25 +1,27 @@
 :root {
+    /* COLORES CORE BOLD */
     --bold-coral: #FF2847; 
     --bold-azul: #121E6C;
     --bold-azul-vibrante: #080EFF;
     --bold-blanco: #FFFFFF;
     
+    /* COLORES PREMIUM SAAS (Estilo Flat Appian con acentos Bold) */
     --bg-page: #FFFFFF; 
     --text-muted: #64748B; 
     --border-soft: #E2E8F0; 
     --shadow-premium: 0 4px 12px rgba(18, 30, 108, 0.04); 
 
+    /* Paleta de Áreas (NOMBRES ACTUALIZADOS) */
     --area-risk: #610017; --area-financial: #C31A2F; --area-sales: #0A53A5;
-    --area-human-talent: #1B8959; --area-legal-y-cumplimiento: #FFC217; --area-cs: #0B3B26;
-    --area-logistica: #052D65; --area-hubs: #910022; --area-marketing: #227AD1;
-    --area-credito: #5B3100; --area-partners: #A16B00; --area-sales-ops: #6CDCAB;
+    --area-human-talent: #1B8959; --area-legal-and-compliance: #FFC217; --area-cs: #0B3B26;
+    --area-logistics: #052D65; --area-hubs: #910022; --area-marketing: #227AD1;
+    --area-credit: #5B3100; --area-partners: #A16B00; --area-sales-ops: #6CDCAB;
     --area-smb: #1E1E1E; --area-inbound: #606060; --area-cx: #969696;
     --area-sci: #FBF3F5; --area-procurement: #FFF3D1; --area-human-ops: #F3F3F3;
     --area-peru: #8E44AD;
     
     --area-default: linear-gradient(135deg, #121E6C 0%, #080EFF 100%); 
 }
-
 html, body {
     height: 100%; 
     background-color: var(--bg-page);

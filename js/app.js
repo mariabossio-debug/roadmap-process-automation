@@ -3,10 +3,10 @@ const sheetApiUrl = 'https://script.google.com/macros/s/AKfycbynd7JOqdCceaBVf_AE
 const wStart = new Date(2026, 0, 1, 0, 0, 0);
 const totalDays = 365; 
 
-// ESTADO INICIAL DEL SISTEMA DE PESTAÑAS (Padres e Hijas)
-let currentMainTab = 'appian';       // Pestaña principal activa ('appian' o 'automation')
-let currentSubTab = 'automation ia'; // Sub-pestaña activa ('automation ia' o 'wsnh')
-let currentTab = 'appian';           // El valor real que usa el filtro de búsqueda
+// ESTADO INICIAL DEL SISTEMA DE PESTAÑAS
+let currentMainTab = 'appian';       
+let currentSubTab = 'automation ia'; 
+let currentTab = 'appian';           
 
 let data = []; 
 let selectedAreas = []; 
@@ -108,6 +108,7 @@ function renderCalendarHeaders() {
     const monthsNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
     const quarters = [{ name: 'Q1', days: 90 }, { name: 'Q2', days: 91 }, { name: 'Q3', days: 92 }, { name: 'Q4', days: 92 }];
+    
     let htmlQuarters = '';
     quarters.forEach(q => { htmlQuarters += `<div class="quarter" style="width: ${(q.days / totalDays) * 100}%;">${q.name}</div>`; });
     document.getElementById('quarters-header').innerHTML = htmlQuarters;
@@ -117,8 +118,10 @@ function renderCalendarHeaders() {
         const monthWidthPct = (days / totalDays) * 100;
         htmlMonths += `<div class="month" style="width: ${monthWidthPct}%;">${monthsNames[i]}</div>`;
         htmlGrid += `<div class="grid-month-container" style="width: ${monthWidthPct}%;">`;
+        
         for(let w = 1; w <= 4; w++) {
-            htmlWeeks += `<div class="week" style="width: ${monthWidthPct / 4}%;">Semana ${w}</div>`;
+            let weekText = currentMainTab === 'appian' ? `S${w}` : `Semana ${w}`;
+            htmlWeeks += `<div class="week" style="width: ${monthWidthPct / 4}%;">${weekText}</div>`;
             htmlGrid += `<div class="grid-week"></div>`;
         }
         htmlGrid += `</div>`; 
@@ -129,7 +132,6 @@ function renderCalendarHeaders() {
     document.getElementById('grid-lines').innerHTML = htmlGrid;
 }
 
-// APLANADORA DE HORAS
 function parseDateSafe(dateValue) {
     if (!dateValue) return null;
     const str = dateValue.toString().trim();
@@ -174,9 +176,11 @@ function scrollToToday() {
 
 function toggleViewMode() {
     const isMonthly = document.getElementById('viewToggle').checked;
+    
     document.getElementById('mainScrollArea').classList.toggle('monthly-view', isMonthly);
     document.getElementById('toggleContainer').classList.toggle('monthly-active', isMonthly);
-    setTimeout(() => { renderProjects(); scrollToToday(); }, 300);
+    
+    setTimeout(() => { renderProjects(); }, 50);
 }
 
 function renderProjects() {
@@ -186,7 +190,6 @@ function renderProjects() {
 
     if (!data || data.length === 0) return;
 
-    // Detectamos si usamos Appian o si usamos el sistema de Burbujas (Automation/WSNH)
     const isAppianStyle = currentMainTab === 'appian';
 
     let filteredData = data.filter(p => {
@@ -228,6 +231,10 @@ function renderProjects() {
             const rawArea = project['Área'] || 'No definida';
             bar.setAttribute('data-area', areaKey);
             
+            const statusKey = normalizeText(project['Estado']);
+            // NUEVO: Le asignamos el estado a la barra para que el CSS pueda aplicarle transparencia si es Prod
+            bar.setAttribute('data-status', statusKey); 
+
             const displayLeft = Math.max(0, leftPos);
             let dateWidthPct = rightPos - leftPos;
             const displayWidthPct = Math.min(dateWidthPct - (displayLeft - leftPos), 100 - displayLeft);
@@ -244,7 +251,6 @@ function renderProjects() {
             const projName = project['Nombre del proyecto'] || 'Sin nombre';
             bar.setAttribute('title', `Proyecto: ${projName}\nÁrea: ${rawArea}\nEstado: ${project['Estado'] || 'No definido'}`);
 
-            const statusKey = normalizeText(project['Estado']);
             let iconHtml = '';
             if (statusKey === 'dev') iconHtml = `<img src="assets/dev.png" class="status-icon">`;
             else if (statusKey === 'test') iconHtml = `<img src="assets/test.png" class="status-icon">`;
@@ -254,7 +260,6 @@ function renderProjects() {
             const devName = project['Desarrollador'] || '';
 
             if (isAppianStyle) {
-                // RENDERIZADO APPIAN (Clásico)
                 bar.innerHTML = `
                     <span class="project-title">${projName}</span>
                     <div class="badges">
@@ -263,7 +268,6 @@ function renderProjects() {
                     </div>
                 `;
             } else {
-                // RENDERIZADO AUTOMATION IA & WSNH (Burbujas Flotantes Avanzadas)
                 const appRaw = project['Aplicativo'] ? project['Aplicativo'].toString().toLowerCase() : '';
                 let appBubbles = '';
                 if (appRaw.includes('dapta')) appBubbles += `<div class="bubble app-bubble"><img src="assets/dapta-logo.png" title="Dapta"></div>`;
@@ -284,7 +288,6 @@ function renderProjects() {
                     `;
                 }
 
-                // EL ORDEN ESTRICTO QUE PEDISTE: Estado -> Aplicativos -> Desarrollador
                 bar.innerHTML = `
                     <span class="project-title">${projName}</span>
                     <div class="floating-bubbles">
@@ -314,31 +317,36 @@ function renderProjects() {
     container.style.height = `${rowEndPositions.length * rowSpacing + 80}px`;
 }
 
-// =========================================================================
-// NUEVO SISTEMA DE CONTROL DE PESTAÑAS (PADRES E HIJAS)
-// =========================================================================
 function switchMainTab(tab) {
     currentMainTab = tab;
-    // Actualiza colores de los botones principales
+    
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
 
-    // Muestra u oculta el menú de sub-pestañas
+    const scrollArea = document.getElementById('mainScrollArea');
+
     if (tab === 'automation') {
         document.getElementById('sub-tabs-automation').style.display = 'flex';
-        currentTab = currentSubTab; // Filtra usando la sub-pestaña activa (ej. 'wsnh')
+        currentTab = currentSubTab; 
+        scrollArea.classList.remove('appian-view'); 
     } else {
         document.getElementById('sub-tabs-automation').style.display = 'none';
-        currentTab = 'appian'; // Filtra por 'appian'
+        currentTab = 'appian'; 
+        scrollArea.classList.add('appian-view'); 
     }
+    
+    document.getElementById('viewToggle').checked = false;
+    scrollArea.classList.remove('monthly-view');
+    document.getElementById('toggleContainer').classList.remove('monthly-active');
+
+    renderCalendarHeaders();
     renderProjects();
 }
 
 function switchSubTab(subtab) {
     currentSubTab = subtab;
-    currentTab = subtab; // Este es el value real que filtra en Sheets
-
-    // Actualiza colores de las sub-pestañas
+    currentTab = subtab; 
+    
     document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
     document.getElementById('sub-tab-' + subtab.replace(/\s+/g, '-')).classList.add('active');
     
@@ -356,6 +364,9 @@ async function loadDataAndRender() {
         try {
             data = JSON.parse(cachedData);
             populateFilterDropdown(); 
+            if (currentMainTab === 'appian') {
+                document.getElementById('mainScrollArea').classList.add('appian-view');
+            }
             renderProjects();
             setTimeout(scrollToToday, 100);
             renderTodayLine();
@@ -374,6 +385,11 @@ async function loadDataAndRender() {
         sessionStorage.setItem('boldRoadmapData', JSON.stringify(data));
         
         populateFilterDropdown(); 
+        
+        if (currentMainTab === 'appian') {
+            document.getElementById('mainScrollArea').classList.add('appian-view');
+        }
+        
         renderProjects();
         renderTodayLine();
         
